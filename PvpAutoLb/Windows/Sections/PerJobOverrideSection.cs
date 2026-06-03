@@ -1,5 +1,4 @@
 using Dalamud.Bindings.ImGui;
-using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using PvpAutoLb.Core;
 using PvpAutoLb.Windows.Components;
@@ -10,43 +9,29 @@ internal static class PerJobOverrideSection
 {
     public static void Draw(Configuration cfg)
     {
-        Styling.SectionLabel("Per-job override");
-
         var jobId = JobLookup.CurrentJobId;
         if (jobId == 0)
         {
-            DrawOfflineCard();
+            using (ImRaii.PushColor(ImGuiCol.Text, Styling.TextDim))
+                ImGui.TextWrapped("Log into a job to set a per-job override. The threshold you set here applies only while that job is active.");
             return;
         }
 
         var jobName = JobLookup.Name(jobId);
         var hasOverride = cfg.HasJobOverride(jobId);
-        var height = hasOverride ? Layout.JobOverrideCardHeightExpanded : Layout.JobOverrideCardHeightCollapsed;
 
-        using (Card.Begin("##joboverride", height * ImGuiHelpers.GlobalScale, Styling.CardBg, Styling.CardBorderDim))
+        if (SettingsRow.Toggle("##joboverride", $"Override for {jobName}",
+                $"When on, {jobName} fires at its own threshold below instead of the global one.",
+                ref hasOverride))
         {
-            if (ImGui.Checkbox($"Override for {jobName}", ref hasOverride))
-            {
-                if (hasOverride) cfg.EnsureJobOverride(jobId);
-                else cfg.ClearJobOverride(jobId);
-                cfg.Save();
-            }
-            Tooltip.OnHover("When on, this job uses its own threshold instead of the global one.");
-
-            if (!cfg.HasJobOverride(jobId)) return;
-
-            ImGui.Spacing();
-            DrawControls(cfg, jobId);
+            if (hasOverride) cfg.EnsureJobOverride(jobId);
+            else cfg.ClearJobOverride(jobId);
+            cfg.Save();
         }
-    }
 
-    private static void DrawOfflineCard()
-    {
-        using (Card.Begin("##joboverride_off", Layout.JobOverrideOfflineCardHeight * ImGuiHelpers.GlobalScale, Styling.CardBgSoft, Styling.CardBorderDim))
-        {
-            using (ImRaii.PushColor(ImGuiCol.Text, Styling.TextDim))
-                ImGui.TextUnformatted("Log into a job to set a per-job override.");
-        }
+        if (!cfg.HasJobOverride(jobId)) return;
+
+        DrawControls(cfg, jobId);
     }
 
     private static void DrawControls(Configuration cfg, uint jobId)
@@ -70,5 +55,9 @@ internal static class PerJobOverrideSection
             j.Absolute = abs;
             cfg.SaveDebounced();
         }
+
+        ImGui.Spacing();
+        ImGui.Spacing();
+        ThresholdWidgets.DrawPreview(j.Mode, j.Percent, j.Absolute);
     }
 }

@@ -19,7 +19,9 @@ internal static class Styling
     public static readonly Vector4 CardBg          = new(0.08f, 0.09f, 0.11f, 0.82f);
     public static readonly Vector4 CardBgHero      = new(0.12f, 0.08f, 0.09f, 0.90f);
     public static readonly Vector4 CardBgSoft      = new(0.10f, 0.11f, 0.13f, 0.60f);
+    public static readonly Vector4 CardBgHover     = new(0.13f, 0.14f, 0.17f, 0.95f);
     public static readonly Vector4 CardBorderDim   = new(0.22f, 0.24f, 0.28f, 1.00f);
+    public static readonly Vector4 BorderDim       = CardBorderDim;
     public static readonly Vector4 BorderWouldFire = new(0.45f, 0.22f, 0.24f, 1.00f);
     public static readonly Vector4 BadgeWouldFire  = new(0.75f, 0.45f, 0.48f, 1.00f);
 
@@ -27,6 +29,11 @@ internal static class Styling
     public static readonly Vector4 TextSecondary   = new(0.78f, 0.78f, 0.82f, 1.00f);
     public static readonly Vector4 TextDim         = new(0.55f, 0.55f, 0.60f, 1.00f);
     public static readonly Vector4 TextMuted       = new(0.40f, 0.40f, 0.44f, 1.00f);
+
+    // Corner radii shared between the ImGui style pushes and hand-drawn cards/tiles (single retune point).
+    public const float CardRounding = 6f;
+    public const float FrameRounding = 5f;
+    public const float WindowRounding = 7f;
 
     public const double PulseFast = 600.0;
     public const double PulseMedium = 800.0;
@@ -43,9 +50,18 @@ internal static class Styling
 
     public static IDisposable PushCardStyle()
     {
-        var p = ImRaii.PushStyle(ImGuiStyleVar.ChildRounding, 6f * ImGuiHelpers.GlobalScale);
+        var p = ImRaii.PushStyle(ImGuiStyleVar.ChildRounding, CardRounding * ImGuiHelpers.GlobalScale);
         p.Push(ImGuiStyleVar.ChildBorderSize, 1f);
         p.Push(ImGuiStyleVar.WindowPadding, new Vector2(10, 8) * ImGuiHelpers.GlobalScale);
+        return p;
+    }
+
+    public static IDisposable PushWindowStyle()
+    {
+        var p = ImRaii.PushStyle(ImGuiStyleVar.FrameRounding, FrameRounding);
+        p.Push(ImGuiStyleVar.WindowRounding, WindowRounding);
+        p.Push(ImGuiStyleVar.ChildRounding, CardRounding);
+        p.Push(ImGuiStyleVar.ItemSpacing, new Vector2(8, 6) * ImGuiHelpers.GlobalScale);
         return p;
     }
 

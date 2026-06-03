@@ -1,8 +1,6 @@
 using System;
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
-using Dalamud.Interface.Utility;
-using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using PvpAutoLb.Core;
 using PvpAutoLb.Windows.Components;
@@ -35,13 +33,13 @@ public sealed class MainWindow : Window, IDisposable
         var ctrl = plugin.Controller;
         var state = LbDrawState.Resolve(ctrl);
 
-        using var style = ImRaii.PushStyle(ImGuiStyleVar.FrameRounding, 5f);
-        style.Push(ImGuiStyleVar.WindowRounding, 7f);
-        style.Push(ImGuiStyleVar.ChildRounding, 6f);
-        style.Push(ImGuiStyleVar.ItemSpacing, new Vector2(8, 6) * ImGuiHelpers.GlobalScale);
+        using var style = Styling.PushWindowStyle();
 
         TopToolbar.Draw(plugin);
         MasterButton.Draw(cfg);
+        ImGui.Spacing();
+
+        StatusLine.Draw(cfg, ctrl, state);
         ImGui.Spacing();
 
         if (cfg.Enabled)

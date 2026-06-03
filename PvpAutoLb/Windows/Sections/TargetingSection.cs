@@ -9,32 +9,32 @@ internal static class TargetingSection
 {
     public static void Draw(Configuration cfg)
     {
-        Styling.SectionLabel("Targeting");
-
-        using (Card.Begin("##targeting", Layout.TargetingCardHeight * ImGuiHelpers.GlobalScale, Styling.CardBg, Styling.CardBorderDim))
+        var auto = cfg.AutoSelectLowestHp;
+        if (SettingsRow.Toggle("##autoselect", "Auto-select lowest-HP hostile",
+                "Continuously scans every visible hostile and targets the one with the lowest HP, overriding your manual hard target.",
+                ref auto))
         {
-            var auto = cfg.AutoSelectLowestHp;
-            if (ImGui.Checkbox("Auto-select lowest-HP hostile in range", ref auto))
-            {
-                cfg.AutoSelectLowestHp = auto;
-                cfg.Save();
-            }
-            Tooltip.OnHover("When on, the plugin continuously scans all visible hostiles and targets the one with the lowest HP — overriding your manual hard target.");
+            cfg.AutoSelectLowestHp = auto;
+            cfg.Save();
+        }
 
-            using (ImRaii.Disabled(!cfg.AutoSelectLowestHp))
-            {
-                var range = cfg.AutoSelectRangeYalms;
-                ImGui.SetNextItemWidth(-1);
-                if (ImGui.SliderFloat("##range", ref range, 5f, 50f, "Range: %.0f y"))
-                {
-                    cfg.AutoSelectRangeYalms = range;
-                    cfg.SaveDebounced();
-                }
+        using (ImRaii.Disabled(!cfg.AutoSelectLowestHp))
+        {
+            SettingsRow.DrawTitle("Scan range");
+            SettingsRow.DrawHelper("How far out to look for hostiles when auto-selecting.");
+            ImGui.Spacing();
 
-                ImGui.Spacing();
-                using (ImRaii.PushColor(ImGuiCol.Text, Styling.TextDim))
-                    ImGui.TextUnformatted(RangeHint(range));
+            var range = cfg.AutoSelectRangeYalms;
+            ImGui.SetNextItemWidth(-1);
+            if (ImGui.SliderFloat("##range", ref range, 5f, 50f, "%.0f y"))
+            {
+                cfg.AutoSelectRangeYalms = range;
+                cfg.SaveDebounced();
             }
+
+            ImGui.Spacing();
+            using (ImRaii.PushColor(ImGuiCol.Text, Styling.TextDim))
+                ImGui.TextUnformatted(RangeHint(range));
         }
     }
 

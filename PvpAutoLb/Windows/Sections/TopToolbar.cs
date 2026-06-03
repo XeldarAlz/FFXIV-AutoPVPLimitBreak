@@ -17,21 +17,36 @@ internal static class TopToolbar
 
         var infoLabel = FontAwesomeIcon.InfoCircle.ToIconString();
         var gearLabel = FontAwesomeIcon.Cog.ToIconString();
-        bool infoClicked, gearClicked;
+
+        float framePadX = ImGui.GetStyle().FramePadding.X;
+        float spacingX = ImGui.GetStyle().ItemSpacing.X;
+        float gearW, infoW;
         using (ImRaii.PushFont(UiBuilder.IconFont))
         {
-            var framePadX = ImGui.GetStyle().FramePadding.X;
-            var spacingX = ImGui.GetStyle().ItemSpacing.X;
-            var gearW = ImGui.CalcTextSize(gearLabel).X + framePadX * 2;
-            var infoW = ImGui.CalcTextSize(infoLabel).X + framePadX * 2;
-            ImGui.SameLine(ImGui.GetWindowContentRegionMax().X - gearW - infoW - spacingX);
-            infoClicked = ImGui.Button(infoLabel + "##about");
-            ImGui.SameLine();
-            gearClicked = ImGui.Button(gearLabel + "##gear");
+            gearW = ImGui.CalcTextSize(gearLabel).X + framePadX * 2;
+            infoW = ImGui.CalcTextSize(infoLabel).X + framePadX * 2;
         }
+        ImGui.SameLine(ImGui.GetWindowContentRegionMax().X - gearW - infoW - spacingX);
+
+        bool infoClicked;
+        using (ImRaii.PushFont(UiBuilder.IconFont))
+            infoClicked = ImGui.Button(infoLabel + "##about");
+        HoverTip("About");
+
+        ImGui.SameLine();
+        bool gearClicked;
+        using (ImRaii.PushFont(UiBuilder.IconFont))
+            gearClicked = ImGui.Button(gearLabel + "##gear");
+        HoverTip("Settings");
+
         if (infoClicked) plugin.ToggleAboutUi();
         if (gearClicked) plugin.ToggleConfigUi();
 
         ImGui.Separator();
+    }
+
+    private static void HoverTip(string text)
+    {
+        if (ImGui.IsItemHovered()) ImGui.SetTooltip(text);
     }
 }

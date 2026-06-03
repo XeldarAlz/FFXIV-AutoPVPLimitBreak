@@ -18,7 +18,7 @@ internal static class LbCard
 
         if (state.ActionId == 0)
         {
-            EmptyCard.Draw("lb", "No PvP Limit Break mapped for current job.", Dalamud.Interface.FontAwesomeIcon.Ban);
+            EmptyCard.Draw("lb", "No PvP Limit Break for this job — switch to a combat job in a PvP duty.", Dalamud.Interface.FontAwesomeIcon.Ban);
             return;
         }
 

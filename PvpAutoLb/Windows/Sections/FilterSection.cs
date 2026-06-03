@@ -1,5 +1,4 @@
 using Dalamud.Bindings.ImGui;
-using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using PvpAutoLb.Core;
 using PvpAutoLb.Windows.Components;
@@ -10,43 +9,32 @@ internal static class FilterSection
 {
     public static void Draw(Configuration cfg)
     {
-        Styling.SectionLabel("Filters");
-
-        using (Card.Begin("##filters", Layout.FilterCardHeight * ImGuiHelpers.GlobalScale, Styling.CardBg, Styling.CardBorderDim))
+        var doomed = cfg.SkipDoomedTargets;
+        if (SettingsRow.Toggle("##skipdoomed", "Skip targets that will die first",
+                "If an enemy is losing HP fast enough to die before the LB lands (~1.2s cast lock), skip it so the charge isn't wasted on a kill someone else gets.",
+                ref doomed))
         {
-            DrawSkipDoomed(cfg);
-            DrawSkipGuarded(cfg);
-            ImGui.Spacing();
-            DrawDutyMask(cfg);
-        }
-    }
-
-    private static void DrawSkipDoomed(Configuration cfg)
-    {
-        var skip = cfg.SkipDoomedTargets;
-        if (ImGui.Checkbox("Skip targets that will die before the LB lands", ref skip))
-        {
-            cfg.SkipDoomedTargets = skip;
+            cfg.SkipDoomedTargets = doomed;
             cfg.Save();
         }
-        Tooltip.OnHover("Estimates each enemy's HP-per-second loss; skips them if predicted death is sooner than ~1.2s (typical LB animation lock).");
-    }
 
-    private static void DrawSkipGuarded(Configuration cfg)
-    {
-        var skip = cfg.SkipGuardedTargets;
-        if (ImGui.Checkbox("Skip targets using Guard", ref skip))
+        var guarded = cfg.SkipGuardedTargets;
+        if (SettingsRow.Toggle("##skipguarded", "Skip targets using Guard",
+                "Guard reduces incoming damage by 90% for 5s — the LB would land for ~10% and waste the charge, so guarded targets are skipped.",
+                ref guarded))
         {
-            cfg.SkipGuardedTargets = skip;
+            cfg.SkipGuardedTargets = guarded;
             cfg.Save();
         }
-        Tooltip.OnHover("Targets with the PvP Guard status (90% damage reduction, 5s) are skipped — the LB would land for ~10% damage and waste the charge.");
+
+        DrawDutyMask(cfg);
     }
 
     private static void DrawDutyMask(Configuration cfg)
     {
-        using (ImRaii.PushColor(ImGuiCol.Text, Styling.TextDim))
-            ImGui.TextUnformatted("ALLOWED DUTIES");
+        SettingsRow.DrawTitle("Allowed duties");
+        SettingsRow.DrawHelper("Auto-fire only runs in the PvP modes you tick here.");
+        ImGui.Spacing();
 
         var mask = cfg.EnabledDuties;
         var changed = false;

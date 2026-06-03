@@ -9,23 +9,19 @@ namespace PvpAutoLb.Windows.Sections;
 
 internal static class BlocklistSection
 {
-    private const int MaxRowsBeforeScroll = 6;
+    private const int MaxRowsBeforeScroll = 8;
     private static string addBuffer = string.Empty;
 
     public static void Draw(Configuration cfg)
     {
-        Styling.SectionLabel("Player blocklist");
+        SettingsRow.DrawTitle("Add a name");
+        SettingsRow.DrawHelper("Type an exact player name and press Enter. Blocked players are never auto-targeted.");
+        ImGui.Spacing();
 
-        var rows = cfg.NameBlocklist.Count;
-        var listH = Math.Min(rows, MaxRowsBeforeScroll) * Layout.BlocklistRowHeight;
-        var height = (Layout.BlocklistBaseHeight + listH) * ImGuiHelpers.GlobalScale;
-
-        using (Card.Begin("##blocklist", height, Styling.CardBg, Styling.CardBorderDim))
-        {
-            DrawAddInput(cfg);
-            ImGui.Spacing();
-            DrawList(cfg);
-        }
+        DrawAddInput(cfg);
+        ImGui.Spacing();
+        ImGui.Spacing();
+        DrawList(cfg);
     }
 
     private static void DrawAddInput(Configuration cfg)
@@ -42,7 +38,6 @@ internal static class BlocklistSection
             }
             addBuffer = string.Empty;
         }
-        Tooltip.OnHover("Names listed here will never be auto-targeted, even when below threshold.");
     }
 
     private static void DrawList(Configuration cfg)
