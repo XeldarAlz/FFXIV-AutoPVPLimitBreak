@@ -1,3 +1,5 @@
+using System;
+using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
@@ -15,7 +17,7 @@ internal static class BlocklistSection
         Styling.SectionLabel("Player blocklist");
 
         var rows = cfg.NameBlocklist.Count;
-        var listH = System.Math.Min(rows, MaxRowsBeforeScroll) * Layout.BlocklistRowHeight;
+        var listH = Math.Min(rows, MaxRowsBeforeScroll) * Layout.BlocklistRowHeight;
         var height = (Layout.BlocklistBaseHeight + listH) * ImGuiHelpers.GlobalScale;
 
         using (Card.Begin("##blocklist", height, Styling.CardBg, Styling.CardBorderDim))
@@ -53,9 +55,9 @@ internal static class BlocklistSection
         }
 
         var rows = cfg.NameBlocklist.Count;
-        var listH = System.Math.Min(rows, MaxRowsBeforeScroll) * Layout.BlocklistRowHeight * ImGuiHelpers.GlobalScale;
+        var listH = Math.Min(rows, MaxRowsBeforeScroll) * Layout.BlocklistRowHeight * ImGuiHelpers.GlobalScale;
 
-        using (ImRaii.Child("##blocklist_rows", new System.Numerics.Vector2(-1, listH), false))
+        using (ImRaii.Child("##blocklist_rows", new Vector2(-1, listH), false))
         {
             var removeIndex = -1;
             for (var i = 0; i < cfg.NameBlocklist.Count; i++)
@@ -66,7 +68,7 @@ internal static class BlocklistSection
                 ImGui.SameLine();
                 var btnLabel = "Remove";
                 var btnW = ImGui.CalcTextSize(btnLabel).X + ImGui.GetStyle().FramePadding.X * 2;
-                ImGui.SameLine(ImGui.GetContentRegionAvail().X + ImGui.GetCursorPosX() - btnW);
+                Styling.SameLineRightAligned(btnW);
                 if (ImGui.SmallButton(btnLabel + "##rm")) removeIndex = i;
                 ImGui.PopID();
             }

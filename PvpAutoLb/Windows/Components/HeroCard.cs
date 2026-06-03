@@ -10,8 +10,6 @@ namespace PvpAutoLb.Windows.Components;
 
 internal static class HeroCard
 {
-    private static readonly Vector4 BadgeWouldFire = new(0.75f, 0.45f, 0.48f, 1f);
-
     public static void Draw(IBattleChara target, bool below, Configuration cfg, LbDrawState state)
     {
         var firing = below && cfg.Enabled && state.CanFire;
@@ -25,7 +23,7 @@ internal static class HeroCard
 
             var distLabel = $"{Geo.DistanceToPlayer(target):F1} y";
             var distWidth = ImGui.CalcTextSize(distLabel).X;
-            ImGui.SameLine(ImGui.GetContentRegionAvail().X + ImGui.GetCursorPosX() - distWidth);
+            Styling.SameLineRightAligned(distWidth);
             using (ImRaii.PushColor(ImGuiCol.Text, Styling.TextDim))
                 ImGui.TextUnformatted(distLabel);
 
@@ -59,7 +57,7 @@ internal static class HeroCard
         else if (below && !cfg.Enabled)
         {
             icon = FontAwesomeIcon.Pause;
-            color = BadgeWouldFire;
+            color = Styling.BadgeWouldFire;
             text = "Paused — would fire if plugin enabled";
         }
         else if (below && state.IsSupport)

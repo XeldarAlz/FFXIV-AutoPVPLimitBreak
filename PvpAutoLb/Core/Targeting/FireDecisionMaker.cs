@@ -33,9 +33,6 @@ internal static class FireDecisionMaker
             LbCastShape.CircleAroundTarget
                 => DecideCircleAroundTarget(profile, cfg, below),
 
-            // Cone / line / cross — geometric shape requires player facing /
-            // orientation we don't model. Treat as single-target picking; the
-            // LB will catch what the player is facing at cast time.
             _ => DecideSingleTarget(profile, cfg, below),
         };
     }
@@ -57,7 +54,7 @@ internal static class FireDecisionMaker
 
     private static FireDecision? DecidePbAoe(LbTargetingProfile profile, IReadOnlyList<IBattleChara> below)
     {
-        var radius = profile.EffectRange > 0 ? profile.EffectRange : PvpAutoLbConstants.UnknownAoeFallbackYalms;
+        var radius = EffectiveAoeRadius(profile);
         IBattleChara? pick = null;
         var bestHp = uint.MaxValue;
         var count = 0;
@@ -75,14 +72,12 @@ internal static class FireDecisionMaker
     private static FireDecision? DecideCircleAroundTarget(LbTargetingProfile profile, Configuration cfg, IReadOnlyList<IBattleChara> below)
     {
         var castRange = EffectiveCastRange(profile, cfg);
-        var aoeRadius = profile.EffectRange > 0 ? profile.EffectRange : PvpAutoLbConstants.UnknownAoeFallbackYalms;
+        var aoeRadius = EffectiveAoeRadius(profile);
 
         IBattleChara? best = null;
         var bestScore = 0;
         var bestHp = uint.MaxValue;
 
-        // O(n²) — fine for the handful of hostiles in a CC match. Switch to a
-        // spatial index if Frontline-scale match counts ever push this hot.
         for (var i = 0; i < below.Count; i++)
         {
             var candidate = below[i];
@@ -143,4 +138,7 @@ internal static class FireDecisionMaker
         => profile.Range > 0
             ? Math.Min(profile.Range, cfg.AutoSelectRangeYalms)
             : cfg.AutoSelectRangeYalms;
+
+    private static float EffectiveAoeRadius(LbTargetingProfile profile)
+        => profile.EffectRange > 0 ? profile.EffectRange : PvpAutoLbConstants.UnknownAoeFallbackYalms;
 }

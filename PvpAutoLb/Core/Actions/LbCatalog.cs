@@ -84,7 +84,7 @@ internal static class LbCatalog
 
     private static void LogResolvedMap(Dictionary<uint, uint[]> map)
     {
-        Svc.Log.Info($"[PvpAutoLb] resolved PvP LBs for {map.Count} jobs");
+        Svc.Log.Info($"{PvpAutoLbConstants.LogPrefix} resolved PvP LBs for {map.Count} jobs");
         var jobs = Svc.Data.GetExcelSheet<LuminaClassJob>();
         var actions = Svc.Data.GetExcelSheet<LuminaAction>();
         foreach (var (jobId, ids) in map.OrderBy(kv => kv.Key))
@@ -95,21 +95,21 @@ internal static class LbCatalog
                 var name = actions?.GetRowOrDefault(id)?.Name.ToString() ?? $"Action{id}";
                 return $"{id} ({name})";
             }));
-            Svc.Log.Debug($"[PvpAutoLb]   {jobId} {jobName} -> [{parts}]");
+            Svc.Log.Debug($"{PvpAutoLbConstants.LogPrefix}   {jobId} {jobName} -> [{parts}]");
         }
     }
 
     private static void DumpDiagnostics()
     {
         var sheet = Svc.Data.GetExcelSheet<LuminaAction>();
-        if (sheet == null) { Svc.Log.Error("[PvpAutoLb] diag: action sheet is null"); return; }
+        if (sheet == null) { Svc.Log.Error($"{PvpAutoLbConstants.LogPrefix} diag: action sheet is null"); return; }
 
         var categories = Svc.Data.GetExcelSheet<LuminaActionCategory>();
-        Svc.Log.Info("[PvpAutoLb] diag: IsPvP actions by ActionCategory:");
+        Svc.Log.Info($"{PvpAutoLbConstants.LogPrefix} diag: IsPvP actions by ActionCategory:");
         foreach (var g in sheet.Where(a => a.IsPvP).GroupBy(a => a.ActionCategory.RowId).OrderByDescending(g => g.Count()))
         {
             var name = categories?.GetRowOrDefault(g.Key)?.Name.ToString() ?? "?";
-            Svc.Log.Info($"[PvpAutoLb]   cat={g.Key} ({name}) count={g.Count()}");
+            Svc.Log.Info($"{PvpAutoLbConstants.LogPrefix}   cat={g.Key} ({name}) count={g.Count()}");
         }
     }
 }

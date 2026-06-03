@@ -86,7 +86,6 @@ public class Configuration : IPluginConfiguration
 
     public void Save() => Plugin.PluginInterface.SavePluginConfig(this);
 
-    // Slider/drag callbacks fire every frame; debounce so we don't hammer disk.
     public void SaveDebounced()
     {
         if (EzThrottler.Throttle(PvpAutoLbConstants.ThrottleKeys.Save, PvpAutoLbConstants.SaveThrottleMs))

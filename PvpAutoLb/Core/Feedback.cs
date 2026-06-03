@@ -14,7 +14,7 @@ internal static class Feedback
         }
         if (cfg.LogFireToChat)
         {
-            Svc.Chat.Print($"[PvpAutoLb] fired {actionName} on {target.Name.TextValue}");
+            Svc.Chat.Print($"{PvpAutoLbConstants.LogPrefix} fired {actionName} on {target.Name.TextValue}");
         }
     }
 }

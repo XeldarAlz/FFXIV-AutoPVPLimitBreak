@@ -4,7 +4,7 @@ namespace PvpAutoLb.Core;
 
 internal static class HpMath
 {
-    // ShieldPercentage is in 0–100, expressed as a percentage of MaxHp.
+    // ShieldPercentage is 0–100 (% of MaxHp).
     public static uint ShieldHp(IBattleChara t)
         => (uint)((ulong)t.MaxHp * t.ShieldPercentage / 100UL);
 

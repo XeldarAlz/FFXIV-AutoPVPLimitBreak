@@ -17,10 +17,6 @@ internal static class TargetSelector
         var mePos = me.Position;
         var rangeSq = rangeYalms * rangeYalms;
 
-        // Manual scan + sort to avoid a four-stage LINQ pipeline running every
-        // tick. The object table is iterated once, the result list is grown to
-        // a sensible initial capacity, and InsertionSort is good enough for
-        // the small N (≤ tens of hostiles).
         var result = new List<IBattleChara>(16);
         foreach (var o in Svc.Objects)
         {

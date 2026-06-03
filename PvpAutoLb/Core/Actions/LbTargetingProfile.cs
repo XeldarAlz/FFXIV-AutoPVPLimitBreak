@@ -70,7 +70,7 @@ internal readonly record struct LbTargetingProfile(
         var row = sheet?.GetRowOrDefault(actionId);
         if (row == null) return None;
 
-        // Range: sbyte. -1 means "self/no range" — treat as 0.
+        // -1 = self/no range → treat as 0.
         var range = row.Value.Range < 0 ? 0f : row.Value.Range;
         var effect = (float)row.Value.EffectRange;
         var width = (float)row.Value.XAxisModifier;

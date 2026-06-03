@@ -4,9 +4,7 @@ namespace PvpAutoLb.Core;
 
 internal static class LbClassifier
 {
-    // Job ids whose PvP LB is defensive or support-focused. Tagged here rather
-    // than detected, because Lumina exposes "self-target" but not "intent",
-    // and several offensive LBs also self-target during the cast.
+    // Job ids whose PvP LB is defensive/support — never auto-fired.
     private static readonly HashSet<uint> SupportJobs = new()
     {
         19, // PLD — Phalanx

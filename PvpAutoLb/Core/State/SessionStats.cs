@@ -29,7 +29,7 @@ internal sealed class SessionStats
         cfg.LifetimeFires++;
         cfg.LifetimeEnemiesAffected += (uint)Math.Max(0, enemiesAffected);
         cfg.SaveDebounced();
-        watching.Add(new WatchedFire(target.EntityId, target.CurrentHp, DateTime.UtcNow));
+        watching.Add(new WatchedFire(target.EntityId, DateTime.UtcNow));
     }
 
     public void Tick()
@@ -76,5 +76,5 @@ internal sealed class SessionStats
         cfg.Save();
     }
 
-    private readonly record struct WatchedFire(ulong EntityId, uint HpAtFire, DateTime At);
+    private readonly record struct WatchedFire(ulong EntityId, DateTime At);
 }

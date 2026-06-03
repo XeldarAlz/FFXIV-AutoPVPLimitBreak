@@ -5,9 +5,7 @@ namespace PvpAutoLb.Core;
 
 internal static class DutyDetector
 {
-    // FFXIV TerritoryIntendedUse row ids. These have been stable across recent
-    // patches; if SE ever renumbers them the only consequence is duties falling
-    // through to DutyMask.Other.
+    // FFXIV TerritoryIntendedUse row ids.
     private const byte IntendedUseFrontline = 31;
     private const byte IntendedUseCrystallineConflict = 32;
     private const byte IntendedUseRivalWings = 36;

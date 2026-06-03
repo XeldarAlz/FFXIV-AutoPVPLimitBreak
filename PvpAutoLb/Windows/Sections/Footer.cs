@@ -25,7 +25,7 @@ internal static class Footer
 
         var labelOnly = buttonId.Substring(0, buttonId.IndexOf("##", StringComparison.Ordinal));
         var btnW = ImGui.CalcTextSize(labelOnly).X + ImGui.GetStyle().FramePadding.X * 2;
-        ImGui.SameLine(ImGui.GetContentRegionAvail().X + ImGui.GetCursorPosX() - btnW);
+        Styling.SameLineRightAligned(btnW);
         if (ImGui.Button(buttonId)) onReset();
     }
 
@@ -39,7 +39,7 @@ internal static class Footer
             var build = $"build {typeof(Footer).Assembly.GetName().Version}";
             ImGui.TextUnformatted(fired);
             var buildW = ImGui.CalcTextSize(build).X;
-            ImGui.SameLine(ImGui.GetContentRegionAvail().X + ImGui.GetCursorPosX() - buildW);
+            Styling.SameLineRightAligned(buildW);
             ImGui.TextUnformatted(build);
         }
     }

@@ -21,6 +21,7 @@ internal static class Styling
     public static readonly Vector4 CardBgSoft      = new(0.10f, 0.11f, 0.13f, 0.60f);
     public static readonly Vector4 CardBorderDim   = new(0.22f, 0.24f, 0.28f, 1.00f);
     public static readonly Vector4 BorderWouldFire = new(0.45f, 0.22f, 0.24f, 1.00f);
+    public static readonly Vector4 BadgeWouldFire  = new(0.75f, 0.45f, 0.48f, 1.00f);
 
     public static readonly Vector4 TextStrong      = new(0.96f, 0.96f, 0.96f, 1.00f);
     public static readonly Vector4 TextSecondary   = new(0.78f, 0.78f, 0.82f, 1.00f);
@@ -53,4 +54,7 @@ internal static class Styling
         using (ImRaii.PushColor(ImGuiCol.Text, TextDim))
             ImGui.TextUnformatted(label.ToUpperInvariant());
     }
+
+    public static void SameLineRightAligned(float itemWidth)
+        => ImGui.SameLine(ImGui.GetContentRegionAvail().X + ImGui.GetCursorPosX() - itemWidth);
 }

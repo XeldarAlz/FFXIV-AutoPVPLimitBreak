@@ -4,8 +4,6 @@ using ECommons.DalamudServices;
 
 namespace PvpAutoLb.Core;
 
-// Owns the hard-target swap state machine: snapshot the user's pre-swap
-// target on first yank, then restore it after the LB animation lands.
 internal sealed class TargetSwapper
 {
     private ulong? userOriginalTargetId;
@@ -30,8 +28,6 @@ internal sealed class TargetSwapper
         if (userOriginalTargetId == null) return;
         if ((DateTime.UtcNow - lastSwapAtUtc).TotalMilliseconds < PvpAutoLbConstants.TargetRestoreDelayMs) return;
 
-        // If the user has manually moved off our pick, respect their choice
-        // and stop tracking — don't snap them back.
         if (Svc.Targets.Target?.EntityId != lastOurSwapTargetId)
         {
             ClearRestoreState();

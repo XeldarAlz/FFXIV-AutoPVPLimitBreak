@@ -8,6 +8,7 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ECommons.DalamudServices;
+using PvpAutoLb.Core;
 
 namespace PvpAutoLb.Windows;
 
@@ -215,7 +216,7 @@ public sealed class AboutWindow : Window, IDisposable
         }
         catch (Exception ex)
         {
-            Svc.Log.Warning(ex, "[PvpAutoLb] failed to launch browser for {0}, copied to clipboard instead", url);
+            Svc.Log.Warning(ex, PvpAutoLbConstants.LogPrefix + " failed to launch browser for {0}, copied to clipboard instead", url);
             ImGui.SetClipboardText(url);
         }
     }

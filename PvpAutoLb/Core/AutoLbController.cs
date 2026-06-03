@@ -28,7 +28,7 @@ internal sealed class AutoLbController : IDisposable
         Stats = new SessionStats(cfg);
         firer = new LbFirer(swapper);
         Svc.Framework.Update += OnTick;
-        Svc.Log.Info("[PvpAutoLb] controller online — build " + typeof(AutoLbController).Assembly.GetName().Version);
+        Svc.Log.Info(PvpAutoLbConstants.LogPrefix + " controller online — build " + typeof(AutoLbController).Assembly.GetName().Version);
     }
 
     public void Dispose()
@@ -38,15 +38,13 @@ internal sealed class AutoLbController : IDisposable
 
     private void OnTick(IFramework _)
     {
-        // The framework dispatcher swallows handler exceptions in some Dalamud
-        // builds, so we wrap and log to keep state observable from /xllog.
         try
         {
             Tick();
         }
         catch (Exception ex)
         {
-            Svc.Log.Error(ex, "[PvpAutoLb] tick failed");
+            Svc.Log.Error(ex, $"{PvpAutoLbConstants.LogPrefix} tick failed");
         }
     }
 
@@ -109,7 +107,7 @@ internal sealed class AutoLbController : IDisposable
         if (!firer.TryFire(jobId, target, out var actionId)) return;
         Stats.RecordFire(target, LastEnemiesAffected);
         Feedback.OnFire(cfg, target, LbCatalog.GetActionName(actionId));
-        Svc.Log.Info($"[PvpAutoLb] fired {actionId} on 0x{target.EntityId:X} (caught {LastEnemiesAffected})");
+        Svc.Log.Info($"{PvpAutoLbConstants.LogPrefix} fired {actionId} on 0x{target.EntityId:X} (caught {LastEnemiesAffected})");
     }
 
     private bool IsDutyAllowed()
