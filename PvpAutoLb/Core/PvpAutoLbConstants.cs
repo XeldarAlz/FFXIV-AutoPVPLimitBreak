@@ -2,7 +2,6 @@ namespace PvpAutoLb.Core;
 
 internal static class PvpAutoLbConstants
 {
-    // Prefix for all log lines and chat output.
     public const string LogPrefix = "[PvpAutoLb]";
 
     // FFXIV's "no target" sentinel for ActionManager.
@@ -14,7 +13,6 @@ internal static class PvpAutoLbConstants
     // ms; below this predicted time-to-death the target dies before our cast lands.
     public const int DoomedTtdMs = 1200;
 
-    // ms; delay before restoring the user's pre-swap target.
     public const int TargetRestoreDelayMs = 700;
 
     // Fallback AoE radius (yalms) when EffectRange is 0.
@@ -24,7 +22,6 @@ internal static class PvpAutoLbConstants
     public const uint DefaultThresholdAbsolute = 7000;
     public const float DefaultAutoSelectRangeYalms = 30f;
 
-    // ActionCategory row id for "Limit Break".
     public const uint LimitBreakCategoryId = 15;
 
     public static class ThrottleKeys

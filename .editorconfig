@@ -1,5 +1,4 @@
 root = true
-# top-most EditorConfig file
 
 [*]
 charset = utf-8

@@ -20,10 +20,9 @@ internal readonly record struct LbTargetingProfile(
     uint ActionId,
     float Range,
     float EffectRange,
-    LbCastShape Shape,
-    float Width)
+    LbCastShape Shape)
 {
-    public static LbTargetingProfile None => new(0, 0, 0, LbCastShape.Unknown, 0);
+    public static LbTargetingProfile None => new(0, 0, 0, LbCastShape.Unknown);
 
     public bool IsAoe => Shape is
         LbCastShape.CircleAroundCaster or
@@ -73,9 +72,8 @@ internal readonly record struct LbTargetingProfile(
         // -1 = self/no range → treat as 0.
         var range = row.Value.Range < 0 ? 0f : row.Value.Range;
         var effect = (float)row.Value.EffectRange;
-        var width = (float)row.Value.XAxisModifier;
         var shape = MapShape(row.Value.CastType);
-        return new LbTargetingProfile(actionId, range, effect, shape, width);
+        return new LbTargetingProfile(actionId, range, effect, shape);
     }
 
     private static LbCastShape MapShape(byte castType) => castType switch
