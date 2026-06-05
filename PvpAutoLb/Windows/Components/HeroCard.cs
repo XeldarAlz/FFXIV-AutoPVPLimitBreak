@@ -64,7 +64,7 @@ internal static class HeroCard
         {
             icon = FontAwesomeIcon.InfoCircle;
             color = Styling.AccentAmber;
-            text = "Support LB — not auto-fired";
+            text = state.ModeBlurb;
         }
         else if (below && !state.ActionReady)
         {

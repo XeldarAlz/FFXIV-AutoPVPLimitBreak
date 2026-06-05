@@ -24,7 +24,7 @@ public readonly record struct EffectiveThreshold(ThresholdMode Mode, float Perce
 [Serializable]
 public class Configuration : IPluginConfiguration
 {
-    public int Version { get; set; } = 2;
+    public int Version { get; set; } = 3;
 
     public bool Enabled { get; set; } = true;
 
@@ -36,6 +36,10 @@ public class Configuration : IPluginConfiguration
     public float AutoSelectRangeYalms { get; set; } = PvpAutoLbConstants.DefaultAutoSelectRangeYalms;
 
     public Dictionary<uint, JobThreshold> PerJobThresholds { get; set; } = new();
+
+    public Dictionary<uint, LbRule> PerJobRules { get; set; } = new();
+
+    public int PresetVersion { get; set; }
 
     public bool SkipDoomedTargets { get; set; } = true;
     public bool SkipGuardedTargets { get; set; } = true;
@@ -51,29 +55,60 @@ public class Configuration : IPluginConfiguration
     public uint LifetimeKills { get; set; }
     public uint LifetimeEnemiesAffected { get; set; }
 
+    public LbRule GlobalOffensiveRule()
+        => LbRule.OffensiveDefault(ThresholdMode, HpThresholdPercent, HpThresholdAbsolute);
+
+    public LbRule EffectiveRuleFor(uint jobId)
+        => jobId != 0 && PerJobRules.TryGetValue(jobId, out var r) ? r : GlobalOffensiveRule();
+
     public EffectiveThreshold EffectiveThresholdFor(uint jobId)
-        => PerJobThresholds.TryGetValue(jobId, out var j)
-            ? new EffectiveThreshold(j.Mode, j.Percent, j.Absolute)
-            : new EffectiveThreshold(ThresholdMode, HpThresholdPercent, HpThresholdAbsolute);
+        => EffectiveRuleFor(jobId).EnemyThreshold();
 
-    public bool HasJobOverride(uint jobId) => jobId != 0 && PerJobThresholds.ContainsKey(jobId);
+    public bool HasJobRule(uint jobId) => jobId != 0 && PerJobRules.ContainsKey(jobId);
 
-    public JobThreshold EnsureJobOverride(uint jobId)
+    public LbRule EnsureJobRule(uint jobId)
     {
-        if (!PerJobThresholds.TryGetValue(jobId, out var j))
+        if (!PerJobRules.TryGetValue(jobId, out var r))
         {
-            j = new JobThreshold
-            {
-                Mode = ThresholdMode,
-                Percent = HpThresholdPercent,
-                Absolute = HpThresholdAbsolute,
-            };
-            PerJobThresholds[jobId] = j;
+            r = GlobalOffensiveRule();
+            r.Source = RuleSource.User;
+            PerJobRules[jobId] = r;
         }
-        return j;
+        return r;
     }
 
-    public void ClearJobOverride(uint jobId) => PerJobThresholds.Remove(jobId);
+    public void ClearJobRule(uint jobId) => PerJobRules.Remove(jobId);
+
+    public bool ApplyPresets(IReadOnlyDictionary<uint, LbRule> rules, int presetVersion)
+    {
+        foreach (var (jobId, incoming) in rules)
+        {
+            if (jobId == 0) continue;
+            if (PerJobRules.TryGetValue(jobId, out var existing) && existing.Source == RuleSource.User)
+                continue;
+            var copy = incoming.Clone();
+            copy.Source = RuleSource.Preset;
+            PerJobRules[jobId] = copy;
+        }
+        PresetVersion = presetVersion;
+        Save();
+        return true;
+    }
+
+    public void MigrateIfNeeded()
+    {
+        if (Version >= 3)
+            return;
+        foreach (var (jobId, jt) in PerJobThresholds)
+        {
+            if (jobId == 0 || PerJobRules.ContainsKey(jobId)) continue;
+            var r = LbRule.OffensiveDefault(jt.Mode, jt.Percent, jt.Absolute);
+            r.Source = RuleSource.User;
+            PerJobRules[jobId] = r;
+        }
+        Version = 3;
+        Save();
+    }
 
     public string FormatEffective(uint jobId, string prefix = "Fires below ")
     {
@@ -81,7 +116,7 @@ public class Configuration : IPluginConfiguration
         var label = t.Mode == ThresholdMode.Percent
             ? $"{prefix}{t.Percent:F0}% HP"
             : $"{prefix}{t.Absolute:N0} HP";
-        return HasJobOverride(jobId) ? label + " (per-job)" : label;
+        return HasJobRule(jobId) ? label + " (per-job)" : label;
     }
 
     public void Save() => Plugin.PluginInterface.SavePluginConfig(this);

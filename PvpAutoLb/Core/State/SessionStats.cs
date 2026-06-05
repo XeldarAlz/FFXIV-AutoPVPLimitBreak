@@ -32,6 +32,13 @@ internal sealed class SessionStats
         watching.Add(new WatchedFire(target.EntityId, DateTime.UtcNow));
     }
 
+    public void RecordSupportFire()
+    {
+        TotalFires++;
+        cfg.LifetimeFires++;
+        cfg.SaveDebounced();
+    }
+
     public void Tick()
     {
         if (watching.Count == 0) return;

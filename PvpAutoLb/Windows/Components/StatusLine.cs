@@ -51,7 +51,7 @@ internal static class StatusLine
             return new(FontAwesomeIcon.Ban, Styling.TextDim, "This job has no PvP Limit Break.", false);
 
         if (state.IsSupport)
-            return new(FontAwesomeIcon.InfoCircle, Styling.AccentAmber, "Defensive LB — not auto-fired.", false);
+            return new(FontAwesomeIcon.InfoCircle, Styling.AccentAmber, state.ModeBlurb + ".", false);
 
         var target = ctrl.LastResolvedTarget;
         var threshold = cfg.FormatEffective(state.JobId, string.Empty).Trim();

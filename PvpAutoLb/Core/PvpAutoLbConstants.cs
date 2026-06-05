@@ -22,7 +22,22 @@ internal static class PvpAutoLbConstants
     public const uint DefaultThresholdAbsolute = 7000;
     public const float DefaultAutoSelectRangeYalms = 30f;
 
+    public const float DefaultAllyHpPercent = 50f;
+    public const int DefaultAllyCountNear = 2;
+    public const float DefaultAllyRadiusYalms = 15f;
+    public const int DefaultEnemyCountNear = 1;
+    public const float DefaultEnemyRadiusYalms = 20f;
+
     public const uint LimitBreakCategoryId = 15;
+
+    public const int PresetApiVersion = 1;
+
+    public static class Ipc
+    {
+        public const string ApiVersion = "PvpAutoLb.Presets.ApiVersion";
+        public const string GetVersion = "PvpAutoLb.Presets.GetVersion";
+        public const string Apply = "PvpAutoLb.Presets.Apply";
+    }
 
     public static class ThrottleKeys
     {

@@ -23,6 +23,7 @@ public sealed class Plugin : IDalamudPlugin
     internal WindowSystem WindowSystem { get; } = new("PvpAutoLb");
     internal AutoLbController Controller { get; }
 
+    private readonly PresetIpc presetIpc;
     private readonly ConfigWindow configWindow;
     private readonly MainWindow mainWindow;
     private readonly AboutWindow aboutWindow;
@@ -32,7 +33,9 @@ public sealed class Plugin : IDalamudPlugin
         ECommonsMain.Init(PluginInterface, this);
 
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+        Configuration.MigrateIfNeeded();
         Controller = new AutoLbController(Configuration);
+        presetIpc = new PresetIpc(Configuration);
 
         configWindow = new ConfigWindow(this);
         mainWindow = new MainWindow(this);
@@ -67,6 +70,7 @@ public sealed class Plugin : IDalamudPlugin
         configWindow.Dispose();
         mainWindow.Dispose();
         aboutWindow.Dispose();
+        presetIpc.Dispose();
         Controller.Dispose();
 
         CommandManager.RemoveHandler(PrimaryCommand);

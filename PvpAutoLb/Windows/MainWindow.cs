@@ -31,7 +31,7 @@ public sealed class MainWindow : Window, IDisposable
     {
         var cfg = plugin.Configuration;
         var ctrl = plugin.Controller;
-        var state = LbDrawState.Resolve(ctrl);
+        var state = LbDrawState.Resolve(ctrl, cfg);
 
         using var style = Styling.PushWindowStyle();
 

@@ -27,10 +27,10 @@ internal static class StatusPill
             ImGui.TextUnformatted(text);
     }
 
-    public static void DrawSupport()
+    public static void DrawSupport(string text)
     {
         using (ImRaii.PushColor(ImGuiCol.Text, Styling.AccentAmber))
-            ImGui.TextUnformatted("DEFENSIVE");
+            ImGui.TextUnformatted(text);
     }
 
     public static float MeasureWidth(string text) => ImGui.CalcTextSize(text).X;

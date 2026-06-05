@@ -68,7 +68,7 @@ internal static class LbCard
         bool firing, float rowTopY, float iconSize, float lineSpacing)
     {
         ImGui.SetCursorPosY(rowTopY + MathF.Max(iconSize, lineSpacing) + 2f * ImGuiHelpers.GlobalScale);
-        var threshLabel = state.IsSupport ? "Support LB — not auto-fired" : cfg.FormatEffective(state.JobId);
+        var threshLabel = state.IsSupport ? state.ModeBlurb : cfg.FormatEffective(state.JobId);
         using (ImRaii.PushColor(ImGuiCol.Text, state.IsSupport ? Styling.AccentAmber : Styling.TextDim))
             ImGui.TextUnformatted(threshLabel);
 
@@ -111,14 +111,14 @@ internal static class LbCard
     private static void DrawPillRightAligned(LbDrawState state, bool firing, bool wouldFire, bool enabled, float yPos)
     {
         var text = state.IsSupport
-            ? "DEFENSIVE"
+            ? state.ModeLabel
             : StatusPill.Resolve(firing, wouldFire, state.Readiness, enabled).Text;
         var pillW = StatusPill.MeasureWidth(text);
         var pillX = ImGui.GetWindowContentRegionMax().X - pillW;
 
         ImGui.SameLine(pillX);
         ImGui.SetCursorPosY(yPos);
-        if (state.IsSupport) StatusPill.DrawSupport();
+        if (state.IsSupport) StatusPill.DrawSupport(text);
         else StatusPill.Draw(firing, wouldFire, state.Readiness, enabled);
     }
 }

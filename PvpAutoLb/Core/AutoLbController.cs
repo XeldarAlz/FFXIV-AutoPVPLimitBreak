@@ -10,6 +10,8 @@ namespace PvpAutoLb.Core;
 
 internal sealed class AutoLbController : IDisposable
 {
+    private static readonly IReadOnlyList<IBattleChara> EmptyAllies = Array.Empty<IBattleChara>();
+
     private readonly Configuration cfg;
     private readonly TargetSwapper swapper = new();
     private readonly LbFirer firer;
@@ -63,23 +65,45 @@ internal sealed class AutoLbController : IDisposable
         LastProfile = profile;
         if (profile.ActionId == 0) { ClearState(); return; }
 
-        var hostiles = TargetSelector.ScanHostiles(cfg.AutoSelectRangeYalms);
-        for (var i = 0; i < hostiles.Count; i++) HpTracker.Sample(hostiles[i]);
+        var rule = cfg.EffectiveRuleFor(jobId);
 
-        if (cfg.AutoSelectLowestHp)
-            TickAutoSelect(jobId, profile, hostiles);
-        else
-            TickManualTarget(jobId);
+        if (rule.Mode == LbFireMode.Offensive)
+        {
+            var hostiles = TargetSelector.ScanHostiles(cfg.AutoSelectRangeYalms);
+            for (var i = 0; i < hostiles.Count; i++) HpTracker.Sample(hostiles[i]);
+
+            if (cfg.AutoSelectLowestHp)
+                TickAutoSelect(jobId, profile, rule, hostiles);
+            else
+                TickManualTarget(jobId);
+            return;
+        }
+
+        TickTeamState(jobId, profile, rule);
     }
 
-    private void TickAutoSelect(uint jobId, LbTargetingProfile profile, IReadOnlyList<IBattleChara> hostiles)
+    private void TickAutoSelect(uint jobId, LbTargetingProfile profile, LbRule rule, IReadOnlyList<IBattleChara> hostiles)
     {
-        var decision = FireDecisionMaker.Decide(profile, cfg, hostiles, HpTracker);
+        var decision = FireDecisionMaker.Decide(profile, rule, cfg, hostiles, EmptyAllies, HpTracker);
         LastResolvedTarget = decision?.HardTarget;
         LastEnemiesAffected = decision?.EnemiesAffected ?? 0;
         if (decision == null) return;
         if (BlocklistFilter.IsBlocked(decision.HardTarget, cfg.NameBlocklist)) return;
-        Fire(jobId, decision.HardTarget);
+        Fire(jobId, decision.HardTarget, LastEnemiesAffected, offensive: true);
+    }
+
+    private void TickTeamState(uint jobId, LbTargetingProfile profile, LbRule rule)
+    {
+        var scanRange = Math.Max(cfg.AutoSelectRangeYalms, Math.Max(rule.EnemyRadiusYalms, rule.AllyRadiusYalms));
+        var hostiles = TargetSelector.ScanHostiles(scanRange);
+        var allies = TargetSelector.ScanAllies(scanRange, includeSelf: true);
+
+        var decision = FireDecisionMaker.Decide(profile, rule, cfg, hostiles, allies, HpTracker);
+        LastResolvedTarget = decision?.HardTarget;
+        LastEnemiesAffected = 0;
+        if (decision == null) return;
+
+        Fire(jobId, decision.HardTarget, 0, offensive: false);
     }
 
     private void TickManualTarget(uint jobId)
@@ -99,15 +123,16 @@ internal sealed class AutoLbController : IDisposable
         if (cfg.SkipGuardedTargets && StatusFilter.IsGuarded(manual)) { LastEnemiesAffected = 0; return; }
         if (BlocklistFilter.IsBlocked(manual, cfg.NameBlocklist)) { LastEnemiesAffected = 0; return; }
         LastEnemiesAffected = 1;
-        Fire(jobId, manual);
+        Fire(jobId, manual, 1, offensive: true);
     }
 
-    private void Fire(uint jobId, IBattleChara target)
+    private void Fire(uint jobId, IBattleChara target, int enemiesAffected, bool offensive)
     {
         if (!firer.TryFire(jobId, target, out var actionId)) return;
-        Stats.RecordFire(target, LastEnemiesAffected);
+        if (offensive) Stats.RecordFire(target, enemiesAffected);
+        else Stats.RecordSupportFire();
         Feedback.OnFire(cfg, target, LbCatalog.GetActionName(actionId));
-        Svc.Log.Info($"{PvpAutoLbConstants.LogPrefix} fired {actionId} on 0x{target.EntityId:X} (caught {LastEnemiesAffected})");
+        Svc.Log.Info($"{PvpAutoLbConstants.LogPrefix} fired {actionId} on 0x{target.EntityId:X} (caught {enemiesAffected})");
     }
 
     private bool IsDutyAllowed()

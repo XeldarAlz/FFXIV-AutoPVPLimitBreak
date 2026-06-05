@@ -9,9 +9,56 @@ internal sealed record FireDecision(IBattleChara HardTarget, int EnemiesAffected
 
 internal static class FireDecisionMaker
 {
-    public static FireDecision? Decide(LbTargetingProfile profile, Configuration cfg, IReadOnlyList<IBattleChara> hostiles, HpTracker tracker)
+    public static FireDecision? Decide(LbTargetingProfile profile, LbRule rule, Configuration cfg,
+        IReadOnlyList<IBattleChara> hostiles, IReadOnlyList<IBattleChara> allies, HpTracker tracker)
     {
-        if (!Player.Available || profile.ActionId == 0 || hostiles.Count == 0) return null;
+        if (!Player.Available || profile.ActionId == 0) return null;
+
+        return rule.Mode switch
+        {
+            LbFireMode.Defensive => DecideDefensive(rule, hostiles, allies),
+            LbFireMode.Utility => DecideUtility(rule, hostiles, allies),
+            _ => DecideOffensive(profile, cfg, hostiles, tracker),
+        };
+    }
+
+    private static FireDecision? DecideDefensive(LbRule rule, IReadOnlyList<IBattleChara> hostiles, IReadOnlyList<IBattleChara> allies)
+    {
+        if (CountWithin(hostiles, rule.EnemyRadiusYalms) < rule.EnemyCountNear) return null;
+
+        var hurt = 0;
+        for (var i = 0; i < allies.Count; i++)
+        {
+            var a = allies[i];
+            if (Geo.DistanceToPlayer(a) > rule.AllyRadiusYalms) continue;
+            if (a.MaxHp == 0) continue;
+            if (100f * HpMath.EffectiveHp(a) / a.MaxHp < rule.AllyHpPercent) hurt++;
+        }
+        if (hurt < rule.AllyCountNear) return null;
+
+        return new FireDecision(Player.Object!, hurt);
+    }
+
+    private static FireDecision? DecideUtility(LbRule rule, IReadOnlyList<IBattleChara> hostiles, IReadOnlyList<IBattleChara> allies)
+    {
+        if (CountWithin(hostiles, rule.EnemyRadiusYalms) < rule.EnemyCountNear) return null;
+        var alliesNear = CountWithin(allies, rule.AllyRadiusYalms);
+        if (alliesNear < rule.AllyCountNear) return null;
+
+        return new FireDecision(Player.Object!, alliesNear);
+    }
+
+    private static int CountWithin(IReadOnlyList<IBattleChara> list, float radius)
+    {
+        var n = 0;
+        for (var i = 0; i < list.Count; i++)
+            if (Geo.DistanceToPlayer(list[i]) <= radius) n++;
+        return n;
+    }
+
+    private static FireDecision? DecideOffensive(LbTargetingProfile profile, Configuration cfg, IReadOnlyList<IBattleChara> hostiles, HpTracker tracker)
+    {
+        if (hostiles.Count == 0) return null;
 
         var jobId = Player.Object!.ClassJob.RowId;
         var below = FilterBelowThreshold(hostiles, cfg, jobId);
