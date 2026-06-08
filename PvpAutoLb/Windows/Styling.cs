@@ -12,9 +12,16 @@ internal static class Styling
     public static readonly Vector4 AccentRedBright = new(1.00f, 0.50f, 0.55f, 1.00f);
     public static readonly Vector4 AccentOrange    = new(0.98f, 0.62f, 0.24f, 1.00f);
     public static readonly Vector4 AccentAmber     = new(0.90f, 0.72f, 0.30f, 1.00f);
+    public static readonly Vector4 AccentAmberSoft = new(1.00f, 0.86f, 0.52f, 1.00f);
     public static readonly Vector4 AccentGreen     = new(0.34f, 0.78f, 0.44f, 1.00f);
+    public static readonly Vector4 AccentMint      = new(0.46f, 0.86f, 0.66f, 1.00f);
+    public static readonly Vector4 AccentMintSoft  = new(0.66f, 0.96f, 0.80f, 1.00f);
     public static readonly Vector4 AccentBlue      = new(0.38f, 0.62f, 0.95f, 1.00f);
+    public static readonly Vector4 AccentBlueSoft  = new(0.62f, 0.82f, 1.00f, 1.00f);
     public static readonly Vector4 AccentViolet    = new(0.68f, 0.52f, 0.92f, 1.00f);
+    public static readonly Vector4 AccentVioletSoft = new(0.78f, 0.60f, 1.00f, 1.00f);
+    public static readonly Vector4 AccentPink      = new(0.95f, 0.45f, 0.78f, 1.00f);
+    public static readonly Vector4 AccentRose      = new(0.93f, 0.42f, 0.50f, 1.00f);
 
     public static readonly Vector4 CardBg          = new(0.08f, 0.09f, 0.11f, 0.82f);
     public static readonly Vector4 CardBgHero      = new(0.12f, 0.08f, 0.09f, 0.90f);
@@ -30,6 +37,8 @@ internal static class Styling
     public static readonly Vector4 TextDim         = new(0.55f, 0.55f, 0.60f, 1.00f);
     public static readonly Vector4 TextMuted       = new(0.40f, 0.40f, 0.44f, 1.00f);
 
+    public static readonly Vector4 Hairline        = new(1f, 1f, 1f, 0.055f);
+
     // Corner radii shared between the ImGui style pushes and hand-drawn cards/tiles (single retune point).
     public const float CardRounding = 6f;
     public const float FrameRounding = 5f;
@@ -39,6 +48,9 @@ internal static class Styling
     public const double PulseMedium = 800.0;
     public const double PulseDefault = 900.0;
 
+    public const double PulseBreath = 2600.0;
+    public const double PulseOrbit = 3400.0;
+
     public static float Pulse(double periodMs = PulseDefault)
     {
         var t = (Environment.TickCount % periodMs) / periodMs;
@@ -47,6 +59,31 @@ internal static class Styling
 
     public static Vector4 PulseColor(Vector4 a, Vector4 b, double periodMs = PulseDefault)
         => Vector4.Lerp(a, b, Pulse(periodMs));
+
+    public static float Phase(double periodMs)
+        => (float)((Environment.TickCount % periodMs) / periodMs);
+
+    public static Vector4 WithAlpha(Vector4 c, float a) => c with { W = a };
+
+    public static void TextCentered(string text, Vector4 color, float fontScale = 1f)
+    {
+        if (fontScale != 1f) ImGui.SetWindowFontScale(fontScale);
+        var w = ImGui.CalcTextSize(text).X;
+        var avail = ImGui.GetContentRegionAvail().X;
+        if (avail > w) ImGui.SetCursorPosX(ImGui.GetCursorPosX() + (avail - w) * 0.5f);
+        using (ImRaii.PushColor(ImGuiCol.Text, color))
+            ImGui.TextUnformatted(text);
+        if (fontScale != 1f) ImGui.SetWindowFontScale(1f);
+    }
+
+    public static void VSpace(float pixels)
+        => ImGui.Dummy(new Vector2(0, pixels * ImGuiHelpers.GlobalScale));
+
+    public static void CenterNextItem(float width)
+    {
+        var avail = ImGui.GetContentRegionAvail().X;
+        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + MathF.Max(0f, (avail - width) * 0.5f));
+    }
 
     public static IDisposable PushCardStyle()
     {
