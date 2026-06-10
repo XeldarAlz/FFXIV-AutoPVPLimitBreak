@@ -148,7 +148,7 @@ jobs:
           exit 1
 
       # Ping the multi-plugin hub repo so it regenerates repo.json immediately
-      # instead of waiting for its daily cron. The hub workflow re-reads each
+      # instead of waiting for its hourly cron. The hub workflow re-reads each
       # plugin's repo.json and refreshes DownloadCount from the GitHub API.
       - name: Trigger hub repo regeneration
         if: ${{ env.HUB_REPO_PAT != '' }}
