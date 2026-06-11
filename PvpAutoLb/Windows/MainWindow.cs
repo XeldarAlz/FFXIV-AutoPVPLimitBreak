@@ -21,7 +21,6 @@ public sealed class MainWindow : Window, IDisposable
         };
         Size = new Vector2(420, 440);
         SizeCondition = ImGuiCond.FirstUseEver;
-        Flags = ImGuiWindowFlags.NoCollapse;
         this.plugin = plugin;
     }
 

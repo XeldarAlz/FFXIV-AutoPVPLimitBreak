@@ -19,7 +19,6 @@ public sealed class ConfigWindow : Window, IDisposable
 
     public ConfigWindow(Plugin plugin) : base("Auto PVP LB — Settings###PvpAutoLbConfig")
     {
-        Flags = ImGuiWindowFlags.NoCollapse;
         Size = new Vector2(560, 520);
         SizeCondition = ImGuiCond.FirstUseEver;
         SizeConstraints = new WindowSizeConstraints
