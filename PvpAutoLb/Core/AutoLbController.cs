@@ -121,6 +121,7 @@ internal sealed class AutoLbController : IDisposable
             return;
         }
         if (cfg.SkipGuardedTargets && StatusFilter.IsGuarded(manual)) { LastEnemiesAffected = 0; return; }
+        if (cfg.SkipInvulnerableTargets && StatusFilter.IsImmuneToLb(manual)) { LastEnemiesAffected = 0; return; }
         if (BlocklistFilter.IsBlocked(manual, cfg.NameBlocklist)) { LastEnemiesAffected = 0; return; }
         LastEnemiesAffected = 1;
         Fire(jobId, manual, 1, offensive: true);

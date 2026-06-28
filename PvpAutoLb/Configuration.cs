@@ -43,6 +43,7 @@ public class Configuration : IPluginConfiguration
 
     public bool SkipDoomedTargets { get; set; } = true;
     public bool SkipGuardedTargets { get; set; } = true;
+    public bool SkipInvulnerableTargets { get; set; } = true;
 
     public bool PlaySoundOnFire { get; set; } = false;
     public int FireSoundId { get; set; } = 7;

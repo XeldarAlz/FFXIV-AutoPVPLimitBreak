@@ -47,7 +47,13 @@ internal static class PvpAutoLbConstants
 
     public static class StatusIds
     {
-        // PvP Guard (from action 29053): 90% damage reduction, 5s.
-        public const uint Guard = 1302;
+        // PvP Guard (action 29053): heavy damage reduction + CC immunity while up.
+        public const uint Guard = 3054;
+
+        // Paladin LB Phalanx (action 29069) grants Hallowed Ground to self: impervious to most attacks, 10s.
+        public const uint HallowedGround = 1302;
+
+        // Dark Knight LB Eventide grants Undead Redemption: HP cannot drop below 1, 10s.
+        public const uint UndeadRedemption = 3039;
     }
 }

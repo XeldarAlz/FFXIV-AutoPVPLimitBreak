@@ -27,6 +27,15 @@ internal static class FilterSection
             cfg.Save();
         }
 
+        var immune = cfg.SkipInvulnerableTargets;
+        if (SettingsRow.Toggle("##skipinvuln", "Skip targets immune to your LB",
+                "Paladin's Phalanx LB (Hallowed Ground) and Dark Knight's Eventide LB (Undead Redemption) make the target immune to damage for 10s — the LB can't kill them, so these targets are skipped.",
+                ref immune))
+        {
+            cfg.SkipInvulnerableTargets = immune;
+            cfg.Save();
+        }
+
         DrawDutyMask(cfg);
     }
 

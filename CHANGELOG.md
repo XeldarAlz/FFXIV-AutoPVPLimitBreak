@@ -2,6 +2,16 @@
 
 All notable changes to Auto PVP LB are documented here.
 
+## v1.0.6.0
+
+New filter: the LB no longer auto-fires on targets made invulnerable by a tank Limit Break. Also corrects the Guard status ID, which never matched the real PvP Guard status.
+
+### Added
+- **Skip targets immune to your LB.** Paladin's Phalanx LB grants the caster **Hallowed Ground** (status `1302`) and Dark Knight's Eventide LB grants **Undead Redemption** (status `3039`) — both make the target immune to damage (or unkillable) for 10s, so firing the LB into them wastes the charge. The picker now skips these targets in both the auto-select path (`FireDecisionMaker` → `FilterImmune`) and the manual-target path (`AutoLbController.TickManualTarget`) via `StatusFilter.IsImmuneToLb`. New `Skip targets immune to your LB` toggle in **Settings → Filters**, default on. Resolves #21.
+
+### Fixed
+- **Guard skip now matches the real Guard status.** `StatusIds.Guard` was `1302`, which is actually PvP **Hallowed Ground**, not Guard — so "Skip targets using Guard" never skipped Guarded targets and instead happened to skip Paladin-LB targets. Corrected to `3054` (the PvP Guard status, cross-checked against XIVAPI, Garland Tools, and RotationSolver/WrathCombo). With the new invulnerability filter above now covering Hallowed Ground (`1302`), Paladin-LB targets stay skipped, Dark-Knight-LB targets are skipped too, and the Guard toggle finally does what its label says.
+
 ## v1.0.5.2
 
 Display-name change only. No behavior changes.
