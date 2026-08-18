@@ -2,6 +2,23 @@
 
 All notable changes to Auto PVP LB are documented here.
 
+## v1.1.0.0
+
+Dependency and toolchain refresh, plus Patreon and Discord links in the About window. No changes to targeting, thresholds, filters, or fire behavior.
+
+### Added
+- **Discord and Patreon links in the About window.** A Discord pill joins the connect row, and the support button now points at Patreon rather than GitHub Sponsors, matching the link set used across the other plugins. Both open on left-click and copy to the clipboard on right-click, same as every other link.
+
+### Changed
+- **ECommons 3.2.1.15 → 3.2.1.17.** Thirteen upstream commits. None touch the surface this plugin uses (`Svc`, `Player`, `EzThrottler`, `ECommonsMain`, `IsHostile`) — the rewrites landed in `CharacterFunctions`, `ImGuiEx`, `MapEffect`, `DalamudReflector`, and `Automation/Chat`, none of which are referenced here.
+- **`Microsoft.CodeAnalysis.BannedApiAnalyzers` 4.14.0 → 5.6.0.** Ships the same diagnostic set as 4.14.0, so `BannedSymbols.txt` is unchanged and RS0030 still fails the build as an error.
+- **CI and release track the Dalamud release channel again.** `dalamud-distrib/latest.zip` replaces `stg/latest.zip`. The release track now serves 15.0.3.2, byte-identical to staging, so the staging workaround added during the API 15 / Patch 7.50 beta is no longer needed.
+- **`actions/setup-dotnet` v5 → v6.**
+
+### Fixed
+- **`Directory.Build.props` no longer leaks plugin identity into ECommons.** The file also applied to the submodule project, stamping `Copyright (c) XeldarAlz` onto NightmareXIV's assembly and the `.nupkg` it generates on every build. The identity group is now scoped to `PvpAutoLb`.
+- **Solution builds no longer ship a Debug-configuration ECommons.** `PvpAutoLb.sln` carried `ProjectConfigurationPlatforms` entries for a project GUID with no matching `Project` declaration, so the mapping never resolved and `dotnet build PvpAutoLb.sln --configuration Release` — exactly what `release.yml` runs — compiled ECommons as Debug and bundled that build into the published zip. Declaring the project fixes the mapping.
+
 ## v1.0.6.0
 
 New filter: the LB no longer auto-fires on targets made invulnerable by a tank Limit Break. Also corrects the Guard status ID, which never matched the real PvP Guard status.
