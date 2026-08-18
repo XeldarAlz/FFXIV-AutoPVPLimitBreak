@@ -83,6 +83,12 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
         with:
+          # PAT so the published-release event cascade-triggers
+          # update-issue-template-versions.yml; releases created with the
+          # default GITHUB_TOKEN do NOT cascade, so the version dropdowns
+          # would go stale. Falls back to the default token (no cascade)
+          # when the secret isn't configured.
+          token: ${{ secrets.HUB_REPO_PAT || secrets.GITHUB_TOKEN }}
           tag_name: ${{ steps.tag.outputs.target }}
           name: ${{ steps.tag.outputs.target }}
           files: latest.zip
