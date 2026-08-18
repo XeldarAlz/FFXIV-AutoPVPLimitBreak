@@ -7,9 +7,13 @@
     every push to master; if the parsed value has no matching v* tag the
     workflow creates one and triggers release.yml. CI also asserts this
     value matches repo.json (AssemblyVersion + TestingAssemblyVersion).
+
+    Scoped to PvpAutoLb: this file also applies to the ECommons submodule
+    project, which would otherwise inherit our Copyright onto NightmareXIV's
+    assembly and the .nupkg it generates on every build.
   -->
 
-  <PropertyGroup Label="Identity">
+  <PropertyGroup Label="Identity" Condition="'$(MSBuildProjectName)' == 'PvpAutoLb'">
     <Version>1.0.6.0</Version>
     <Authors>XeldarAlz</Authors>
     <Copyright>Copyright (c) XeldarAlz</Copyright>
