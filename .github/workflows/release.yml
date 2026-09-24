@@ -107,6 +107,7 @@ jobs:
           echo "Total downloads across all releases: $total"
 
       - name: Announce the release on Discord
+        continue-on-error: true
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
