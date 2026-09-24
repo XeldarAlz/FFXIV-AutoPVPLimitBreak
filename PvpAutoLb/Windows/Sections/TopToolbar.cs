@@ -21,21 +21,30 @@ internal static class TopToolbar
         using (ImRaii.PushColor(ImGuiCol.Text, hasJob ? Styling.TextDim : Styling.TextMuted))
             ImGui.TextUnformatted(hasJob ? jobName : "offline");
 
+        var changelogLabel = FontAwesomeIcon.Newspaper.ToIconString();
         var consoleLabel = FontAwesomeIcon.Terminal.ToIconString();
         var infoLabel = FontAwesomeIcon.InfoCircle.ToIconString();
         var gearLabel = FontAwesomeIcon.Cog.ToIconString();
 
         float framePadX = ImGui.GetStyle().FramePadding.X;
         float spacingX = ImGui.GetStyle().ItemSpacing.X;
-        float consoleW, gearW, infoW;
+        float changelogW, consoleW, gearW, infoW;
         using (ImRaii.PushFont(UiBuilder.IconFont))
         {
+            changelogW = ImGui.CalcTextSize(changelogLabel).X + framePadX * 2;
             consoleW = ImGui.CalcTextSize(consoleLabel).X + framePadX * 2;
             gearW = ImGui.CalcTextSize(gearLabel).X + framePadX * 2;
             infoW = ImGui.CalcTextSize(infoLabel).X + framePadX * 2;
         }
-        ImGui.SameLine(ImGui.GetWindowContentRegionMax().X - consoleW - gearW - infoW - spacingX * 2);
+        ImGui.SameLine(ImGui.GetWindowContentRegionMax().X - changelogW - consoleW - gearW - infoW - spacingX * 3);
 
+        bool changelogClicked;
+        using (ImRaii.PushFont(UiBuilder.IconFont))
+            changelogClicked = ImGui.Button(changelogLabel + "##changelog");
+        DrawChangelogDot(plugin);
+        HoverTip("Changelog");
+
+        ImGui.SameLine();
         bool consoleClicked;
         using (ImRaii.PushFont(UiBuilder.IconFont))
             consoleClicked = ImGui.Button(consoleLabel + "##console");
@@ -54,6 +63,7 @@ internal static class TopToolbar
             gearClicked = ImGui.Button(gearLabel + "##gear");
         HoverTip("Settings");
 
+        if (changelogClicked) plugin.ToggleChangelogUi();
         if (consoleClicked) plugin.ToggleConsoleUi();
         if (infoClicked) plugin.ToggleAboutUi();
         if (gearClicked) plugin.ToggleConfigUi();
@@ -68,13 +78,28 @@ internal static class TopToolbar
             return;
         }
 
+        DrawCornerDot(ConsoleWindow.LevelColor(unseen));
+    }
+
+    private static void DrawChangelogDot(Plugin plugin)
+    {
+        if (!plugin.Configuration.HasUnseenChangelog)
+        {
+            return;
+        }
+
+        DrawCornerDot(Styling.PulseColor(Styling.AccentRed, Styling.AccentRedBright, Styling.PulseBreath));
+    }
+
+    private static void DrawCornerDot(Vector4 color)
+    {
         var scale = ImGuiHelpers.GlobalScale;
         var inset = UnseenDotInset * scale;
         var radius = UnseenDotRadius * scale;
         var center = new Vector2(ImGui.GetItemRectMax().X - inset, ImGui.GetItemRectMin().Y + inset);
         var drawList = ImGui.GetWindowDrawList();
         drawList.AddCircleFilled(center, radius + UnseenDotRing * scale, ImGui.GetColorU32(ImGuiCol.WindowBg));
-        drawList.AddCircleFilled(center, radius, Paint.Col(ConsoleWindow.LevelColor(unseen)));
+        drawList.AddCircleFilled(center, radius, Paint.Col(color));
     }
 
     private static void HoverTip(string text)

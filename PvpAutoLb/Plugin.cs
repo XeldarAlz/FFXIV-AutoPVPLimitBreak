@@ -21,6 +21,7 @@ public sealed class Plugin : IDalamudPlugin
     private const string ConfigArgument = "config";
     private const string LogArgument = "log";
     private const string ConsoleArgument = "console";
+    private const string ChangelogArgument = "changelog";
 
     internal Configuration Configuration { get; }
     internal WindowSystem WindowSystem { get; } = new("PvpAutoLb");
@@ -31,6 +32,7 @@ public sealed class Plugin : IDalamudPlugin
     private readonly MainWindow mainWindow;
     private readonly AboutWindow aboutWindow;
     private readonly ConsoleWindow consoleWindow;
+    private readonly ChangelogWindow changelogWindow;
 
     public Plugin()
     {
@@ -45,15 +47,17 @@ public sealed class Plugin : IDalamudPlugin
         mainWindow = new MainWindow(this);
         aboutWindow = new AboutWindow();
         consoleWindow = new ConsoleWindow();
+        changelogWindow = new ChangelogWindow(Configuration);
 
         WindowSystem.AddWindow(configWindow);
         WindowSystem.AddWindow(mainWindow);
         WindowSystem.AddWindow(aboutWindow);
         WindowSystem.AddWindow(consoleWindow);
+        WindowSystem.AddWindow(changelogWindow);
 
         CommandManager.AddHandler(PrimaryCommand, new CommandInfo(OnCommand)
         {
-            HelpMessage = "Toggle the Auto PVP LB main window. Use /pvpautolb config to open settings, /pvpautolb log to open the console."
+            HelpMessage = "Toggle the Auto PVP LB main window. Use /pvpautolb config to open settings, /pvpautolb log to open the console, /pvpautolb changelog to see what's new."
         });
         CommandManager.AddHandler(AliasCommand, new CommandInfo(OnCommand)
         {
@@ -100,6 +104,12 @@ public sealed class Plugin : IDalamudPlugin
             return;
         }
 
+        if (argument.Equals(ChangelogArgument, StringComparison.OrdinalIgnoreCase))
+        {
+            ToggleChangelogUi();
+            return;
+        }
+
         ToggleMainUi();
     }
 
@@ -107,6 +117,7 @@ public sealed class Plugin : IDalamudPlugin
     public void ToggleMainUi() => mainWindow.Toggle();
     public void ToggleAboutUi() => aboutWindow.Toggle();
     public void ToggleConsoleUi() => consoleWindow.Toggle();
+    public void ToggleChangelogUi() => changelogWindow.Toggle();
 
     internal bool ConsoleOpen => consoleWindow.IsOpen;
 }

@@ -1,6 +1,7 @@
 using Dalamud.Configuration;
 using ECommons.Throttlers;
 using PvpAutoLb.Core;
+using PvpAutoLb.Core.Changelog;
 using System;
 using System.Collections.Generic;
 
@@ -55,6 +56,22 @@ public class Configuration : IPluginConfiguration
     public uint LifetimeFires { get; set; }
     public uint LifetimeKills { get; set; }
     public uint LifetimeEnemiesAffected { get; set; }
+
+    public string LastSeenChangelogVersion { get; set; } = string.Empty;
+
+    [Newtonsoft.Json.JsonIgnore]
+    public bool HasUnseenChangelog => !string.Equals(LastSeenChangelogVersion, ChangelogData.LatestVersion, StringComparison.Ordinal);
+
+    public void MarkChangelogSeen()
+    {
+        if (!HasUnseenChangelog)
+        {
+            return;
+        }
+
+        LastSeenChangelogVersion = ChangelogData.LatestVersion;
+        Save();
+    }
 
     public LbRule GlobalOffensiveRule()
         => LbRule.OffensiveDefault(ThresholdMode, HpThresholdPercent, HpThresholdAbsolute);
