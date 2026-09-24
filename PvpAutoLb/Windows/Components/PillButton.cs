@@ -1,7 +1,7 @@
-using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
+using System.Numerics;
 
 namespace PvpAutoLb.Windows.Components;
 
@@ -11,17 +11,20 @@ internal static class PillButton
 
     private const float PadX = 13f;
     private const float IconGap = 6f;
+    private const float DefaultHeight = 28f;
 
-    public static float Width(string label, FontAwesomeIcon icon)
+    public static float Width(string label, FontAwesomeIcon? icon = null)
     {
         var scale = ImGuiHelpers.GlobalScale;
-        return PadX * 2f * scale + TextDraw.IconSize(icon).X + IconGap * scale + TextDraw.Measure(label).X;
+        var iconWidth = icon is { } glyph ? TextDraw.IconSize(glyph).X + IconGap * scale : 0f;
+        return PadX * 2f * scale + iconWidth + TextDraw.Measure(label).X;
     }
 
-    public static bool Draw(string id, string label, Vector4 accent, Emphasis emphasis, FontAwesomeIcon icon, bool enabled = true, string? tooltip = null)
+    public static bool Draw(string id, string label, Vector4 accent, Emphasis emphasis = Emphasis.Tinted,
+        FontAwesomeIcon? icon = null, bool enabled = true, float height = DefaultHeight, string? tooltip = null)
     {
         var scale = ImGuiHelpers.GlobalScale;
-        var size = new Vector2(Width(label, icon), Layout.ActionPillHeight * scale);
+        var size = new Vector2(Width(label, icon), height * scale);
         var origin = ImGui.GetCursorScreenPos();
         var hit = Hit.Area(id, size, enabled);
         var hover = Motion.Hover(Motion.Key(id), hit.Hovered);
@@ -42,9 +45,12 @@ internal static class PillButton
 
         var midY = origin.Y + size.Y * 0.5f;
         var x = origin.X + PadX * scale;
-        var iconSize = TextDraw.IconSize(icon);
-        TextDraw.Icon(icon, new Vector2(x, midY - iconSize.Y * 0.5f), text);
-        x += iconSize.X + IconGap * scale;
+        if (icon is { } glyph)
+        {
+            var iconSize = TextDraw.IconSize(glyph);
+            TextDraw.Icon(glyph, new Vector2(x, midY - iconSize.Y * 0.5f), text);
+            x += iconSize.X + IconGap * scale;
+        }
 
         var labelSize = TextDraw.Measure(label);
         TextDraw.At(label, new Vector2(x, midY - labelSize.Y * 0.5f), text);
@@ -53,7 +59,6 @@ internal static class PillButton
         {
             Tooltip.Show(tooltip);
         }
-
         return hit.Clicked;
     }
 
@@ -61,23 +66,26 @@ internal static class PillButton
     {
         if (!enabled)
         {
-            return (Styling.WithAlpha(Styling.CardBgSoft, 0.6f), Styling.WithAlpha(Styling.BorderDim, 0.5f), Styling.TextMuted);
+            return (Styling.WithAlpha(Styling.Surface1, 0.6f), Styling.WithAlpha(Styling.BorderDim, 0.5f), Styling.TextMuted);
         }
 
-        return emphasis switch
+        switch (emphasis)
         {
-            Emphasis.Filled => (
-                Vector4.Lerp(accent, Styling.Lighten(accent, 0.15f), hover),
-                Styling.WithAlpha(Styling.Lighten(accent, 0.5f), 0.6f),
-                Styling.TextStrong),
-            Emphasis.Tinted => (
-                Styling.WithAlpha(accent, 0.16f + 0.12f * hover),
-                Styling.WithAlpha(accent, 0.45f + 0.30f * hover),
-                Vector4.Lerp(Styling.Lighten(accent, 0.25f), Styling.TextStrong, hover * 0.5f)),
-            _ => (
-                Styling.WithAlpha(Styling.CardBgHover, 0.9f * hover),
-                Styling.WithAlpha(Styling.BorderDim, 0.5f + 0.3f * hover),
-                Vector4.Lerp(Styling.TextSecondary, Styling.TextStrong, hover)),
-        };
+            case Emphasis.Filled:
+                return (
+                    Vector4.Lerp(accent, Styling.Lighten(accent, 0.15f), hover),
+                    Styling.WithAlpha(Styling.Lighten(accent, 0.5f), 0.6f),
+                    Styling.TextStrong);
+            case Emphasis.Tinted:
+                return (
+                    Styling.WithAlpha(accent, 0.16f + 0.12f * hover),
+                    Styling.WithAlpha(accent, 0.45f + 0.30f * hover),
+                    Vector4.Lerp(Styling.Lighten(accent, 0.25f), Styling.TextStrong, hover * 0.5f));
+            default:
+                return (
+                    Styling.WithAlpha(Styling.Surface2, 0.9f * hover),
+                    Styling.WithAlpha(Styling.BorderDim, 0.5f + 0.3f * hover),
+                    Vector4.Lerp(Styling.TextSecondary, Styling.TextStrong, hover));
+        }
     }
 }

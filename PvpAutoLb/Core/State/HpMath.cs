@@ -12,12 +12,21 @@ internal static class HpMath
         => t.CurrentHp + ShieldHp(t);
 
     public static bool IsBelowThreshold(IBattleChara t, Configuration cfg, uint jobId)
+        => IsBelowThreshold(t, cfg.EffectiveThresholdFor(jobId));
+
+    public static bool IsBelowThreshold(IBattleChara target, EffectiveThreshold threshold)
     {
-        var eff = EffectiveHp(t);
-        var th = cfg.EffectiveThresholdFor(jobId);
-        if (th.Mode == ThresholdMode.Absolute)
-            return eff < th.Absolute;
-        if (t.MaxHp == 0) return false;
-        return 100f * eff / t.MaxHp < th.Percent;
+        var effective = EffectiveHp(target);
+        if (threshold.Mode == ThresholdMode.Absolute)
+        {
+            return effective < threshold.Absolute;
+        }
+
+        if (target.MaxHp == 0)
+        {
+            return false;
+        }
+
+        return 100f * effective / target.MaxHp < threshold.Percent;
     }
 }

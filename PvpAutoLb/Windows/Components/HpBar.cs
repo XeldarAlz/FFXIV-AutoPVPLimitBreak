@@ -1,56 +1,52 @@
-using System;
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility;
-using Dalamud.Interface.Utility.Raii;
-using PvpAutoLb.Core;
 
 namespace PvpAutoLb.Windows.Components;
 
 internal static class HpBar
 {
-    private static readonly Vector4 ShieldColor = new(0.95f, 0.78f, 0.30f, 0.80f);
-    private static readonly Vector4 ThresholdLineColor = new(1f, 1f, 1f, 0.75f);
-    private static readonly Vector4 BarBg = new(0.06f, 0.07f, 0.08f, 0.90f);
+    private static readonly Vector4 ShieldColor = new(0.96f, 0.80f, 0.36f, 0.85f);
 
-    public static void Draw(uint cur, uint max, uint shield, bool firing, Configuration cfg, uint jobId, float heightDip)
+    public static void Draw(ImDrawListPtr drawList, Vector2 origin, float width, float height, float hp, float shield, float threshold, Vector4 fill)
     {
-        var fraction = max == 0 ? 0f : (float)cur / max;
-        var pct = fraction * 100f;
-        var barColor = firing
-            ? Styling.PulseColor(Styling.AccentRed, Styling.AccentRedBright, Styling.PulseFast)
-            : Styling.AccentGreen;
+        var end = origin + new Vector2(width, height);
+        var rounding = height * 0.5f;
 
-        var barHeight = heightDip * ImGuiHelpers.GlobalScale;
-        var overlay = shield > 0
-            ? $"{cur:N0} (+{shield:N0}) / {max:N0}   ({pct:F1}%%)"
-            : $"{cur:N0} / {max:N0}   ({pct:F1}%%)";
+        Paint.Fill(drawList, origin, end, Styling.WithAlpha(Styling.Surface0, 0.92f), rounding);
+        Paint.Fill(drawList, origin, new Vector2(origin.X + width * threshold, end.Y), Styling.WithAlpha(Styling.AccentRose, 0.10f), rounding);
+        Paint.Stroke(drawList, origin, end, Styling.WithAlpha(Styling.BorderDim, 0.55f), rounding);
 
-        using (ImRaii.PushColor(ImGuiCol.PlotHistogram, barColor))
-        using (ImRaii.PushColor(ImGuiCol.FrameBg, BarBg))
-            ImGui.ProgressBar(fraction, new Vector2(-1, barHeight), overlay);
-
-        var rectMin = ImGui.GetItemRectMin();
-        var rectMax = ImGui.GetItemRectMax();
-        var width = rectMax.X - rectMin.X;
-        var draw = ImGui.GetWindowDrawList();
-
-        if (shield > 0 && max > 0)
+        var hpWidth = width * Math.Clamp(hp, 0f, 1f);
+        if (hpWidth > 0f)
         {
-            var shieldFraction = Math.Clamp((float)shield / max, 0f, 1f - fraction);
-            var startX = rectMin.X + width * fraction;
-            var endX = startX + width * shieldFraction;
-            draw.AddRectFilled(new Vector2(startX, rectMin.Y), new Vector2(endX, rectMax.Y),
-                ImGui.GetColorU32(ShieldColor));
+            var hpEnd = new Vector2(origin.X + MathF.Max(height, hpWidth), end.Y);
+            Paint.Gradient(drawList, origin, hpEnd, Styling.Lighten(fill, 0.22f), fill, rounding);
         }
 
-        var th = cfg.EffectiveThresholdFor(jobId);
-        var thresholdFraction = th.Mode == ThresholdMode.Percent
-            ? Math.Clamp(th.Percent / 100f, 0f, 1f)
-            : max == 0 ? 0f : Math.Clamp((float)th.Absolute / max, 0f, 1f);
+        if (shield > 0f)
+        {
+            var shieldStart = origin.X + hpWidth;
+            var shieldEnd = MathF.Min(end.X, shieldStart + width * shield);
+            Paint.Fill(drawList, new Vector2(shieldStart, origin.Y), new Vector2(shieldEnd, end.Y), ShieldColor, rounding);
+        }
 
-        var x = rectMin.X + width * thresholdFraction;
-        draw.AddLine(new Vector2(x, rectMin.Y - 1), new Vector2(x, rectMax.Y + 1),
-            ImGui.GetColorU32(ThresholdLineColor), 1.5f);
+        DrawMarker(drawList, origin, width, height, threshold);
+    }
+
+    public static void DrawMarker(ImDrawListPtr drawList, Vector2 origin, float width, float height, float threshold)
+    {
+        var scale = ImGuiHelpers.GlobalScale;
+        var end = origin + new Vector2(width, height);
+        var markerX = origin.X + width * Math.Clamp(threshold, 0f, 1f);
+        var overhang = 3f * scale;
+        var markerColor = Paint.Col(Styling.WithAlpha(Styling.TextStrong, 0.92f));
+        drawList.AddLine(new Vector2(markerX, origin.Y - overhang), new Vector2(markerX, end.Y + overhang), markerColor, 2f * scale);
+        var notch = 3.5f * scale;
+        drawList.AddTriangleFilled(
+            new Vector2(markerX - notch, origin.Y - overhang - notch),
+            new Vector2(markerX + notch, origin.Y - overhang - notch),
+            new Vector2(markerX, origin.Y - overhang),
+            markerColor);
     }
 }

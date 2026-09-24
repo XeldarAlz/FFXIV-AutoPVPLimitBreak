@@ -13,12 +13,21 @@ internal static class TargetSelector
     public static IReadOnlyList<IBattleChara> ScanHostiles(float rangeYalms)
     {
         if (!Player.Available) return Array.Empty<IBattleChara>();
+        var result = new List<IBattleChara>(16);
+        ScanHostiles(rangeYalms, result);
+        return result;
+    }
+
+    // The window redraws every frame, so it scans into a list it keeps instead of a fresh one.
+    public static void ScanHostiles(float rangeYalms, List<IBattleChara> result)
+    {
+        result.Clear();
+        if (!Player.Available) return;
         var me = Player.Object!;
         var meId = me.GameObjectId;
         var mePos = me.Position;
         var rangeSq = rangeYalms * rangeYalms;
 
-        var result = new List<IBattleChara>(16);
         foreach (var o in Svc.Objects)
         {
             if (o is not IBattleChara b) continue;
@@ -29,18 +38,25 @@ internal static class TargetSelector
 
             InsertByHp(result, b);
         }
-        return result;
     }
 
     public static IReadOnlyList<IBattleChara> ScanAllies(float rangeYalms, bool includeSelf)
     {
         if (!Player.Available) return Array.Empty<IBattleChara>();
+        var result = new List<IBattleChara>(8);
+        ScanAllies(rangeYalms, includeSelf, result);
+        return result;
+    }
+
+    public static void ScanAllies(float rangeYalms, bool includeSelf, List<IBattleChara> result)
+    {
+        result.Clear();
+        if (!Player.Available) return;
         var me = Player.Object!;
         var meId = me.GameObjectId;
         var mePos = me.Position;
         var rangeSq = rangeYalms * rangeYalms;
 
-        var result = new List<IBattleChara>(8);
         if (includeSelf) InsertByHp(result, me);
 
         foreach (var o in Svc.Objects)
@@ -53,7 +69,6 @@ internal static class TargetSelector
 
             InsertByHp(result, b);
         }
-        return result;
     }
 
     private static bool WithinRange(IBattleChara b, System.Numerics.Vector3 origin, float rangeSq)

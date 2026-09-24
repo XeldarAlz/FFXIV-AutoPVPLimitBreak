@@ -21,20 +21,6 @@ internal readonly record struct LbDrawState(
     public bool ActionReady => Readiness == LbReadyReason.Ready;
     public bool CanFire => ActionId != 0 && ActionReady;
 
-    public string ModeLabel => Mode switch
-    {
-        LbFireMode.Defensive => "DEFENSIVE",
-        LbFireMode.Utility => "UTILITY",
-        _ => "OFFENSIVE",
-    };
-
-    public string ModeBlurb => Mode switch
-    {
-        LbFireMode.Defensive => "Defensive LB — fires when your team is pressured",
-        LbFireMode.Utility => "Utility LB — fires in a teamfight",
-        _ => string.Empty,
-    };
-
     public static LbDrawState Resolve(AutoLbController ctrl, Configuration cfg)
     {
         var jobId = Player.Available ? Player.Object!.ClassJob.RowId : 0u;

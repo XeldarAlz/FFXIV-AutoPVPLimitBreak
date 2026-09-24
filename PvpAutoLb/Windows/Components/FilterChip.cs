@@ -1,7 +1,7 @@
-using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
+using System.Numerics;
 
 namespace PvpAutoLb.Windows.Components;
 
@@ -10,7 +10,6 @@ internal static class FilterChip
     private const float PadX = 11f;
     private const float DotRadius = 3.5f;
     private const float Gap = 7f;
-    private const float ToggleSpeed = 18f;
 
     public static float Width(string label, string? count, FontAwesomeIcon? trailingIcon = null)
     {
@@ -30,7 +29,7 @@ internal static class FilterChip
     }
 
     public static bool Draw(string id, string label, string? count, Vector4 accent, bool active, float height,
-        FontAwesomeIcon? trailingIcon, string tooltip)
+        FontAwesomeIcon? trailingIcon = null, string? tooltip = null)
     {
         var scale = ImGuiHelpers.GlobalScale;
         var size = new Vector2(Width(label, count, trailingIcon), height);
@@ -38,10 +37,10 @@ internal static class FilterChip
         var end = origin + size;
         var hit = Hit.Area(id, size);
         var hover = Motion.Hover(Motion.Key(id), hit.Hovered);
-        var on = Motion.Approach(Motion.Key(id, 1), active ? 1f : 0f, ToggleSpeed);
+        var on = Motion.Approach(Motion.Key(id, 1), active ? 1f : 0f, 18f);
         var drawList = ImGui.GetWindowDrawList();
 
-        var fill = Vector4.Lerp(Styling.WithAlpha(Styling.CardBgSoft, 0.5f + 0.4f * hover), Styling.WithAlpha(accent, 0.16f + 0.08f * hover), on);
+        var fill = Vector4.Lerp(Styling.WithAlpha(Styling.Surface1, 0.5f + 0.4f * hover), Styling.WithAlpha(accent, 0.16f + 0.08f * hover), on);
         var border = Vector4.Lerp(Styling.WithAlpha(Styling.BorderDim, 0.45f + 0.3f * hover), Styling.WithAlpha(accent, 0.5f + 0.25f * hover), on);
         Paint.Pill(drawList, origin, end, fill, border);
 
@@ -79,7 +78,7 @@ internal static class FilterChip
             TextDraw.Icon(glyph, new Vector2(x, midY - iconSize.Y * 0.5f), Vector4.Lerp(Styling.TextDim, Styling.TextStrong, hover));
         }
 
-        if (hit.Hovered)
+        if (hit.Hovered && tooltip is not null)
         {
             Tooltip.Show(tooltip);
         }

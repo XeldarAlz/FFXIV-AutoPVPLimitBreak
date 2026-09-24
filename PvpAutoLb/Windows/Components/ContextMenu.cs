@@ -1,10 +1,11 @@
-using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using System.Numerics;
 
 namespace PvpAutoLb.Windows.Components;
 
+// Popups inherit the shell's zero window padding just like tooltips do, so menus restore their own spacing here.
 internal static class ContextMenu
 {
     private const float PaddingX = 8f;
@@ -27,7 +28,7 @@ internal static class ContextMenu
                 .Push(ImGuiStyleVar.PopupBorderSize, 1f)
                 .Push(ImGuiStyleVar.ItemSpacing, new Vector2(ItemPadX, ItemPadY) * scale)
                 .Push(ImGuiStyleVar.FramePadding, new Vector2(ItemPadX, ItemPadY) * scale);
-            color = ImRaii.PushColor(ImGuiCol.PopupBg, Styling.WithAlpha(Styling.CardBgHover, 0.98f))
+            color = ImRaii.PushColor(ImGuiCol.PopupBg, Styling.WithAlpha(Styling.Surface2, 0.98f))
                 .Push(ImGuiCol.Border, Styling.WithAlpha(Styling.BorderDim, 0.85f))
                 .Push(ImGuiCol.Text, Styling.TextSecondary)
                 .Push(ImGuiCol.TextDisabled, Styling.TextMuted)

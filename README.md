@@ -26,7 +26,7 @@
 
 Monitors enemy HP during PvP. When the target's HP drops below your configured threshold, fires your job's PvP Limit Break. Great for burst jobs like Ninja or Machinist to lock in kills.
 
-Jobs whose PvP LB is defensive or support-focused (e.g. Paladin's Phalanx) are flagged in the status window and never auto-fired.
+Jobs whose PvP LB is defensive or support-focused (e.g. Paladin's Phalanx) are flagged on the Live page and never auto-fired.
 
 ## Features
 
@@ -36,8 +36,10 @@ Jobs whose PvP LB is defensive or support-focused (e.g. Paladin's Phalanx) are f
 - **Skip doomed targets**: predicts time-to-death and skips enemies that will die before the LB lands.
 - **Player blocklist + duty filter**: named players are never targeted; per-mode checkboxes (CC / Frontline / Rival Wings / Custom Match / Other) scope auto-fire.
 - **Auto-target**: picks the lowest-effective-HP hostile in range; falls back to manual hard target when off.
-- **Status window**: current target, HP bar with shield overlay and threshold marker, distance, range/shape, granular readiness (`READY` / `FIRING` / `PAUSED` / `OUT OF RANGE` / `GAUGE LOW` / `DEFENSIVE`).
+- **Live page**: your job's LB with an animated readiness ring for the gauge, the effective rule, the current target with an HP bar, shield overlay and threshold marker, and a plain-language state line (waiting, firing, or why a target is skipped: doomed, Guard, immune, blocklisted, out of range, duty switched off). Nearby enemies are listed the way the selector ranks them.
+- **Combat HUD**: a small borderless overlay with the LB gauge, your target's HP against the threshold and the current state. Shows itself in PvP duties, can be locked so clicks pass through, and toggles with `/pvpautolb hud`.
 - **Session + lifetime stats**: fires, attributed kills, total enemies hit. Lifetime persists across reloads.
+- **Console, changelog and nine languages**: every log line in a filterable console with Copy log for bug reports, a changelog page, and the interface in English, French, German, Turkish, Spanish, Portuguese, Russian, Japanese and Chinese.
 - **Optional feedback**: chat sound (`/se1`–`/se16`) and/or chat line on fire.
 
 ## Install
@@ -54,22 +56,26 @@ Tick **Enabled**, click **+**, then **Save and Close**. Open `/xlplugins` → **
 
 | Command | Action |
 |---|---|
-| `/pvpautolb` | Toggle the status window |
-| `/palb` | Alias for `/pvpautolb` |
-| `/pvpautolb config` | Open settings |
-| `/pvpautolb log` | Open the console (every line the plugin logs, with Copy log for bug reports) |
+| `/pvpautolb` | Toggle the main window |
+| `/palb` | Alias for `/pvpautolb` (every subcommand works with both) |
+| `/pvpautolb config` or `settings` | Open settings |
+| `/pvpautolb log` or `console` | Open the console (every line the plugin logs, with Copy log for bug reports) |
 | `/pvpautolb changelog` | Open the changelog (what changed in each update, newest first) |
+| `/pvpautolb about` | Open the About page |
+| `/pvpautolb hud` | Show or hide the combat HUD until your next zone change |
 
 ## Configuration
 
-Open via `/pvpautolb config` or the gear icon in the status window.
+Open via `/pvpautolb config` or the sliders icon in the main window's left rail. Settings are grouped into Essentials, Tuning, Safety and feedback, and Interface.
 
 - **Threshold**: mode (percent / absolute) and value. Below this, the LB fires.
 - **Per-job override**: each job can have its own threshold mode and value.
 - **Targeting**: auto-select toggle and scan radius (5–50 yalms). When off, only your hard target is considered.
 - **Filters**: skip doomed targets, allowed duty types (CC / Frontline / Rival Wings / Custom / Other).
 - **Player blocklist**: names listed here are never auto-targeted.
-- **Feedback**: optional chat sound and/or chat line on fire.
+- **Notifications**: optional chat sound and/or chat line on fire.
+- **Combat HUD**: show it automatically in PvP duties, lock it in place (click-through), or show and hide it right now.
+- **General**: interface language and whether the main window opens on login.
 
 ## Job compatibility
 

@@ -41,27 +41,6 @@ internal readonly record struct LbTargetingProfile(
         LbCastShape.Donut or
         LbCastShape.Cross;
 
-    public string Describe(int enemiesAffected, bool firing)
-    {
-        var shape = Shape switch
-        {
-            LbCastShape.SingleTarget       => "single-target",
-            LbCastShape.CircleAroundCaster => $"PBAoE {EffectRange:F0}y",
-            LbCastShape.CircleAroundTarget => $"AoE {EffectRange:F0}y around target",
-            LbCastShape.GroundCircle       => $"ground AoE {EffectRange:F0}y",
-            LbCastShape.Cone               => $"cone {EffectRange:F0}y",
-            LbCastShape.Line               => $"line {EffectRange:F0}y",
-            LbCastShape.Donut              => $"donut {EffectRange:F0}y",
-            LbCastShape.Cross              => $"cross {EffectRange:F0}y",
-            _                              => "shape unknown",
-        };
-        var range = Range > 0 ? $"{Range:F0}y · " : string.Empty;
-        var aoeHint = IsAoe && firing && enemiesAffected > 1
-            ? $" · catches {enemiesAffected}"
-            : string.Empty;
-        return range + shape + aoeHint;
-    }
-
     public static LbTargetingProfile FromAction(uint actionId)
     {
         if (actionId == 0) return None;

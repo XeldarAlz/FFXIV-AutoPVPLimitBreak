@@ -6,29 +6,29 @@
 # When adding bans, leave a short justification line above each block.
 
 # --- Threading: untracked threads leak into the game process on plugin unload ---
-M:System.Threading.Thread.#ctor(System.Threading.ThreadStart);Use Svc.Framework.RunOnFrameworkThread or a tracked CancellationTokenSource — bare threads outlive the plugin and crash the game.
-M:System.Threading.Thread.#ctor(System.Threading.ParameterizedThreadStart);Use Svc.Framework.RunOnFrameworkThread or a tracked CancellationTokenSource — bare threads outlive the plugin and crash the game.
+M:System.Threading.Thread.#ctor(System.Threading.ThreadStart);Use Svc.Framework.RunOnFrameworkThread or a tracked CancellationTokenSource; bare threads outlive the plugin and crash the game.
+M:System.Threading.Thread.#ctor(System.Threading.ParameterizedThreadStart);Use Svc.Framework.RunOnFrameworkThread or a tracked CancellationTokenSource; bare threads outlive the plugin and crash the game.
 
 # --- Task.Run / threadpool work: drops you off the framework thread; Dalamud APIs require it ---
-M:System.Threading.Tasks.Task.Run(System.Action);Most Dalamud APIs require the framework thread — use Svc.Framework.RunOnFrameworkThread instead.
-M:System.Threading.Tasks.Task.Run``1(System.Func{``0});Most Dalamud APIs require the framework thread — use Svc.Framework.RunOnFrameworkThread instead.
-M:System.Threading.Tasks.Task.Run(System.Func{System.Threading.Tasks.Task});Most Dalamud APIs require the framework thread — use Svc.Framework.RunOnFrameworkThread instead.
-M:System.Threading.Tasks.TaskFactory.StartNew(System.Action);Same issue as Task.Run — use Svc.Framework.RunOnFrameworkThread.
+M:System.Threading.Tasks.Task.Run(System.Action);Most Dalamud APIs require the framework thread; use Svc.Framework.RunOnFrameworkThread instead.
+M:System.Threading.Tasks.Task.Run``1(System.Func{``0});Most Dalamud APIs require the framework thread; use Svc.Framework.RunOnFrameworkThread instead.
+M:System.Threading.Tasks.Task.Run(System.Func{System.Threading.Tasks.Task});Most Dalamud APIs require the framework thread; use Svc.Framework.RunOnFrameworkThread instead.
+M:System.Threading.Tasks.TaskFactory.StartNew(System.Action);Same issue as Task.Run; use Svc.Framework.RunOnFrameworkThread.
 
 # --- Synchronous blocking on the framework thread freezes the game ---
-M:System.Threading.Thread.Sleep(System.Int32);Sleeping the framework thread freezes the game — gate behavior with EzThrottler or DateTime checks instead.
-M:System.Threading.Thread.Sleep(System.TimeSpan);Sleeping the framework thread freezes the game — gate behavior with EzThrottler or DateTime checks instead.
-M:System.Threading.Tasks.Task.Wait;Sync wait on the framework thread deadlocks Dalamud — use a continuation or schedule on the next tick.
-M:System.Threading.Tasks.Task.WaitAll(System.Threading.Tasks.Task[]);Sync wait deadlocks the framework thread — schedule continuations instead.
+M:System.Threading.Thread.Sleep(System.Int32);Sleeping the framework thread freezes the game; gate behavior with EzThrottler or DateTime checks instead.
+M:System.Threading.Thread.Sleep(System.TimeSpan);Sleeping the framework thread freezes the game; gate behavior with EzThrottler or DateTime checks instead.
+M:System.Threading.Tasks.Task.Wait;Sync wait on the framework thread deadlocks Dalamud; use a continuation or schedule on the next tick.
+M:System.Threading.Tasks.Task.WaitAll(System.Threading.Tasks.Task[]);Sync wait deadlocks the framework thread; schedule continuations instead.
 
 # --- Console I/O: no console is attached to FFXIV's process ---
-M:System.Console.WriteLine(System.String);No console is attached — use Svc.Log instead so messages reach /xllog.
-M:System.Console.Write(System.String);No console is attached — use Svc.Log instead.
+M:System.Console.WriteLine(System.String);No console is attached; use Svc.Log instead so messages reach /xllog.
+M:System.Console.Write(System.String);No console is attached; use Svc.Log instead.
 
 # --- Fragile Dalamud APIs (carried over from ECommons' curated list) ---
-P:Dalamud.Game.ClientState.Objects.Types.IBattleChara.IsCastInterruptible;Unreliable in PvP — verify via FFXIVClientStructs directly.
-P:Dalamud.Game.ClientState.Objects.Types.IBattleChara.CastActionType;Unreliable in PvP — verify via FFXIVClientStructs directly.
-P:Dalamud.Game.ClientState.Objects.Types.IBattleChara.CastActionId;Unreliable in PvP — verify via FFXIVClientStructs directly.
-P:Dalamud.Game.ClientState.Objects.Types.IBattleChara.CurrentCastTime;Unreliable in PvP — verify via FFXIVClientStructs directly.
-P:Dalamud.Game.ClientState.Objects.Types.IBattleChara.BaseCastTime;Unreliable in PvP — verify via FFXIVClientStructs directly.
-P:Dalamud.Game.ClientState.Objects.Types.IBattleChara.TotalCastTime;Unreliable in PvP — verify via FFXIVClientStructs directly.
+P:Dalamud.Game.ClientState.Objects.Types.IBattleChara.IsCastInterruptible;Unreliable in PvP; verify via FFXIVClientStructs directly.
+P:Dalamud.Game.ClientState.Objects.Types.IBattleChara.CastActionType;Unreliable in PvP; verify via FFXIVClientStructs directly.
+P:Dalamud.Game.ClientState.Objects.Types.IBattleChara.CastActionId;Unreliable in PvP; verify via FFXIVClientStructs directly.
+P:Dalamud.Game.ClientState.Objects.Types.IBattleChara.CurrentCastTime;Unreliable in PvP; verify via FFXIVClientStructs directly.
+P:Dalamud.Game.ClientState.Objects.Types.IBattleChara.BaseCastTime;Unreliable in PvP; verify via FFXIVClientStructs directly.
+P:Dalamud.Game.ClientState.Objects.Types.IBattleChara.TotalCastTime;Unreliable in PvP; verify via FFXIVClientStructs directly.

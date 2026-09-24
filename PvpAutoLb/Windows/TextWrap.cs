@@ -1,6 +1,5 @@
-using System;
-using System.Text;
 using Dalamud.Bindings.ImGui;
+using System.Text;
 
 namespace PvpAutoLb.Windows;
 

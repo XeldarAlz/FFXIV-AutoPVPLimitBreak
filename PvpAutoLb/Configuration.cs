@@ -59,6 +59,11 @@ public class Configuration : IPluginConfiguration
 
     public string LastSeenChangelogVersion { get; set; } = string.Empty;
 
+    public string Language { get; set; } = string.Empty;
+    public bool AutoShowOnLogin { get; set; }
+    public bool ShowCombatHud { get; set; } = true;
+    public bool CombatHudLocked { get; set; }
+
     [Newtonsoft.Json.JsonIgnore]
     public bool HasUnseenChangelog => !string.Equals(LastSeenChangelogVersion, ChangelogData.LatestVersion, StringComparison.Ordinal);
 
@@ -126,15 +131,6 @@ public class Configuration : IPluginConfiguration
         }
         Version = 3;
         Save();
-    }
-
-    public string FormatEffective(uint jobId, string prefix = "Fires below ")
-    {
-        var t = EffectiveThresholdFor(jobId);
-        var label = t.Mode == ThresholdMode.Percent
-            ? $"{prefix}{t.Percent:F0}% HP"
-            : $"{prefix}{t.Absolute:N0} HP";
-        return HasJobRule(jobId) ? label + " (per-job)" : label;
     }
 
     public void Save() => Plugin.PluginInterface.SavePluginConfig(this);

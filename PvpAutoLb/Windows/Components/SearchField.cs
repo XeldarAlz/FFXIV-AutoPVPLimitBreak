@@ -1,22 +1,22 @@
-using System;
-using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
+using System.Numerics;
 
 namespace PvpAutoLb.Windows.Components;
 
 internal static class SearchField
 {
-    private const int MaxLength = 96;
+    public const int DefaultMaxLength = 96;
+
     private const float PadX = 12f;
     private const float IconGap = 8f;
     private const float ClearButtonSize = 22f;
-    private const float FocusSpeed = 16f;
 
     // The frame is painted before the input exists, so its focus glow follows the caller's flag from the previous frame.
-    public static bool Draw(string id, string hint, ref string text, ref bool focused, float width, float height, bool requestFocus)
+    public static bool Draw(string id, string hint, ref string text, ref bool focused, float width, float height,
+        bool requestFocus = false, int maxLength = DefaultMaxLength)
     {
         var scale = ImGuiHelpers.GlobalScale;
         var origin = ImGui.GetCursorScreenPos();
@@ -24,9 +24,9 @@ internal static class SearchField
         var padX = PadX * scale;
         var drawList = ImGui.GetWindowDrawList();
         var rounding = height * 0.5f;
-        var focus = Motion.Approach(Motion.Key(id, 1), focused ? 1f : 0f, FocusSpeed);
+        var focus = Motion.Approach(Motion.Key(id, 1), focused ? 1f : 0f, 16f);
 
-        Paint.Fill(drawList, origin, end, Styling.WithAlpha(Styling.CardBg, 0.9f), rounding);
+        Paint.Fill(drawList, origin, end, Styling.WithAlpha(Styling.Surface0, 0.9f), rounding);
         Paint.Stroke(drawList, origin, end,
             Vector4.Lerp(Styling.WithAlpha(Styling.BorderDim, 0.75f), Styling.WithAlpha(Styling.AccentRedBright, 0.85f), focus), rounding);
 
@@ -50,7 +50,7 @@ internal static class SearchField
             .Push(ImGuiCol.FrameBgHovered, Vector4.Zero)
             .Push(ImGuiCol.FrameBgActive, Vector4.Zero))
         {
-            changed = ImGui.InputTextWithHint(id, hint, ref text, MaxLength);
+            changed = ImGui.InputTextWithHint(id, hint, ref text, maxLength);
         }
 
         focused = ImGui.IsItemActive();

@@ -1,4 +1,4 @@
-using System;
+using PvpAutoLb.Core.Localization;
 
 namespace PvpAutoLb.Core.Changelog;
 
@@ -6,12 +6,7 @@ internal static class ChangelogData
 {
     public static readonly ChangelogEntry[] Entries =
     [
-        new("1.2.0.0", "2026-09-24",
-        [
-            "Added the Console window to view, filter and copy the plugin's logs",
-            "Added this changelog, with a badge whenever an update brings something new",
-            "Overhauled the About page, with the updated Discord link",
-        ]),
+        new("1.2.0.0", "2026-09-24", L.Changelog.Release1200),
     ];
 
     public static string LatestVersion => Entries[0].Version;

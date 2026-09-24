@@ -1,6 +1,7 @@
 using Dalamud.Game.ClientState.Objects.Types;
 using ECommons.DalamudServices;
 using FFXIVClientStructs.FFXIV.Client.UI;
+using PvpAutoLb.Core.Localization;
 
 namespace PvpAutoLb.Core;
 
@@ -12,7 +13,7 @@ internal static class Feedback
             PlaySound(cfg.FireSoundId);
         if (cfg.LogFireToChat)
         {
-            Svc.Chat.Print($"{PvpAutoLbConstants.LogPrefix} fired {actionName} on {target.Name.TextValue}");
+            Svc.Chat.Print($"{PvpAutoLbConstants.LogPrefix} {Loc.T(L.Feedback.ChatFired, actionName, target.Name.TextValue)}");
         }
     }
 
