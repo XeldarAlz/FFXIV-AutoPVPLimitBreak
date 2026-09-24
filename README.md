@@ -56,6 +56,7 @@ Tick **Enabled**, click **+**, then **Save and Close**. Open `/xlplugins` → **
 | `/pvpautolb` | Toggle the status window |
 | `/palb` | Alias for `/pvpautolb` |
 | `/pvpautolb config` | Open settings |
+| `/pvpautolb log` | Open the console (every line the plugin logs, with Copy log for bug reports) |
 
 ## Configuration
 

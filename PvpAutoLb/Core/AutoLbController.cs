@@ -30,7 +30,7 @@ internal sealed class AutoLbController : IDisposable
         Stats = new SessionStats(cfg);
         firer = new LbFirer(swapper);
         Svc.Framework.Update += OnTick;
-        Svc.Log.Info(PvpAutoLbConstants.LogPrefix + " controller online — build " + typeof(AutoLbController).Assembly.GetName().Version);
+        RunLog.Info($"controller online, build {typeof(AutoLbController).Assembly.GetName().Version}");
     }
 
     public void Dispose()
@@ -46,7 +46,7 @@ internal sealed class AutoLbController : IDisposable
         }
         catch (Exception ex)
         {
-            Svc.Log.Error(ex, $"{PvpAutoLbConstants.LogPrefix} tick failed");
+            RunLog.Error(ex, "tick failed");
         }
     }
 
@@ -133,7 +133,7 @@ internal sealed class AutoLbController : IDisposable
         if (offensive) Stats.RecordFire(target, enemiesAffected);
         else Stats.RecordSupportFire();
         Feedback.OnFire(cfg, target, LbCatalog.GetActionName(actionId));
-        Svc.Log.Info($"{PvpAutoLbConstants.LogPrefix} fired {actionId} on 0x{target.EntityId:X} (caught {enemiesAffected})");
+        RunLog.Info($"fired {actionId} on 0x{target.EntityId:X} (caught {enemiesAffected})");
     }
 
     private bool IsDutyAllowed()

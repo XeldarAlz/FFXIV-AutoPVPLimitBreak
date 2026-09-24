@@ -12,4 +12,6 @@ internal static class Layout
     public const float HpBarHeightCandidate = 14f;
     public const float PreviewBarHeight = 18f;
     public const float LbIconSize = 40f;
+    public const float ActionPillHeight = 30f;
+    public const float ConsoleChipHeight = 28f;
 }

@@ -8,6 +8,7 @@ using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using ECommons.DalamudServices;
+using PvpAutoLb.Core;
 using PvpAutoLb.Windows.Components;
 
 namespace PvpAutoLb.Windows;
@@ -380,7 +381,7 @@ public sealed class AboutWindow : Window, IDisposable
         ProgressRing.Glow(medC, medR, accent, 0.4f + 0.7f * beat);
         dl.AddCircleFilled(medC, medR, ImGui.GetColorU32(Vector4.Lerp(Styling.CardBg, accent, 0.28f)));
         ProgressRing.Track(medC, medR, 1.5f * s, Styling.WithAlpha(accent, 0.85f));
-        ProgressRing.CenterIcon(medC, FontAwesomeIcon.Heart, Lighten(accent, 0.25f), medR * (0.80f + 0.22f * beat));
+        ProgressRing.CenterIcon(medC, FontAwesomeIcon.Heart, Styling.Lighten(accent, 0.25f), medR * (0.80f + 0.22f * beat));
 
         ImGui.SetCursorScreenPos(new Vector2(slotOrigin.X, origin.Y + pad + medR * 2f + 12f * s));
         Styling.TextCentered(title, Styling.TextStrong, 1.12f);
@@ -424,7 +425,7 @@ public sealed class AboutWindow : Window, IDisposable
         var hover = ImGui.IsMouseHoveringRect(origin, end);
         var rounding = size.Y * 0.5f;
 
-        var fill = (hover ? Lighten(accent, 0.16f) : accent) with { W = 1f };
+        var fill = (hover ? Styling.Lighten(accent, 0.16f) : accent) with { W = 1f };
 
         var glowPulse = 0.5f + 0.5f * Styling.Pulse(Styling.PulseBreath);
         for (var i = 3; i >= 1; i--)
@@ -636,7 +637,7 @@ public sealed class AboutWindow : Window, IDisposable
         Styling.CenterNextItem(total);
 
         using (ImRaii.PushFont(UiBuilder.IconFont))
-        using (ImRaii.PushColor(ImGuiCol.Text, Vector4.Lerp(Styling.AccentBlue, Lighten(Styling.AccentBlueSoft, 0.3f), twinkle)))
+        using (ImRaii.PushColor(ImGuiCol.Text, Vector4.Lerp(Styling.AccentBlue, Styling.Lighten(Styling.AccentBlueSoft, 0.3f), twinkle)))
             ImGui.TextUnformatted(glyph);
         ImGui.SameLine(0, gap);
         using (ImRaii.PushColor(ImGuiCol.Text, Styling.TextDim))
@@ -792,10 +793,7 @@ public sealed class AboutWindow : Window, IDisposable
         return 0.5f * (1f + MathF.Cos(d * MathF.PI));
     }
 
-    private static Vector4 Lighten(Vector4 c, float t)
-        => Vector4.Lerp(c, new Vector4(1f, 1f, 1f, 1f), t) with { W = c.W };
-
     private static void OpenUrl(string url)
         => UrlActions.OpenInBrowser(url, ex =>
-            Svc.Log.Warning(ex, $"failed to launch browser for {url}, copied to clipboard instead"));
+            RunLog.Warning(ex, $"failed to launch browser for {url}, copied to clipboard instead"));
 }

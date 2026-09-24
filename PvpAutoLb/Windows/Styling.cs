@@ -66,6 +66,10 @@ internal static class Styling
 
     public static Vector4 WithAlpha(Vector4 c, float a) => c with { W = a };
 
+    public static Vector4 Lighten(Vector4 color, float amount) => Vector4.Lerp(color, Vector4.One, amount) with { W = color.W };
+
+    public static Vector4 Darken(Vector4 color, float amount) => Vector4.Lerp(color, new Vector4(0f, 0f, 0f, color.W), amount) with { W = color.W };
+
     public static void TextCentered(string text, Vector4 color, float fontScale = 1f)
     {
         if (fontScale != 1f) ImGui.SetWindowFontScale(fontScale);

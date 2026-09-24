@@ -7,7 +7,16 @@ internal static class Tooltip
 {
     public static void OnHover(string text)
     {
-        if (!ImGui.IsItemHovered()) return;
+        if (!ImGui.IsItemHovered())
+        {
+            return;
+        }
+
+        Show(text);
+    }
+
+    public static void Show(string text)
+    {
         using (ImRaii.Tooltip())
         {
             ImGui.PushTextWrapPos(ImGui.GetFontSize() * 24);

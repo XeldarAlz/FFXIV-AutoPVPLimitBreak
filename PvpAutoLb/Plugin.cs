@@ -18,6 +18,9 @@ public sealed class Plugin : IDalamudPlugin
 
     private const string PrimaryCommand = "/pvpautolb";
     private const string AliasCommand = "/palb";
+    private const string ConfigArgument = "config";
+    private const string LogArgument = "log";
+    private const string ConsoleArgument = "console";
 
     internal Configuration Configuration { get; }
     internal WindowSystem WindowSystem { get; } = new("PvpAutoLb");
@@ -27,6 +30,7 @@ public sealed class Plugin : IDalamudPlugin
     private readonly ConfigWindow configWindow;
     private readonly MainWindow mainWindow;
     private readonly AboutWindow aboutWindow;
+    private readonly ConsoleWindow consoleWindow;
 
     public Plugin()
     {
@@ -40,14 +44,16 @@ public sealed class Plugin : IDalamudPlugin
         configWindow = new ConfigWindow(this);
         mainWindow = new MainWindow(this);
         aboutWindow = new AboutWindow();
+        consoleWindow = new ConsoleWindow();
 
         WindowSystem.AddWindow(configWindow);
         WindowSystem.AddWindow(mainWindow);
         WindowSystem.AddWindow(aboutWindow);
+        WindowSystem.AddWindow(consoleWindow);
 
         CommandManager.AddHandler(PrimaryCommand, new CommandInfo(OnCommand)
         {
-            HelpMessage = "Toggle the Auto PVP LB main window. Use /pvpautolb config to open settings."
+            HelpMessage = "Toggle the Auto PVP LB main window. Use /pvpautolb config to open settings, /pvpautolb log to open the console."
         });
         CommandManager.AddHandler(AliasCommand, new CommandInfo(OnCommand)
         {
@@ -81,13 +87,26 @@ public sealed class Plugin : IDalamudPlugin
 
     private void OnCommand(string command, string args)
     {
-        if (args.Trim().Equals("config", StringComparison.OrdinalIgnoreCase))
+        var argument = args.Trim();
+        if (argument.Equals(ConfigArgument, StringComparison.OrdinalIgnoreCase))
+        {
             ToggleConfigUi();
-        else
-            ToggleMainUi();
+            return;
+        }
+
+        if (argument.Equals(LogArgument, StringComparison.OrdinalIgnoreCase) || argument.Equals(ConsoleArgument, StringComparison.OrdinalIgnoreCase))
+        {
+            ToggleConsoleUi();
+            return;
+        }
+
+        ToggleMainUi();
     }
 
     public void ToggleConfigUi() => configWindow.Toggle();
     public void ToggleMainUi() => mainWindow.Toggle();
     public void ToggleAboutUi() => aboutWindow.Toggle();
+    public void ToggleConsoleUi() => consoleWindow.Toggle();
+
+    internal bool ConsoleOpen => consoleWindow.IsOpen;
 }

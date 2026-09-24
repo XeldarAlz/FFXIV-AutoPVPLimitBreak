@@ -33,12 +33,12 @@ internal sealed class PresetIpc : IDisposable
             var rules = JsonConvert.DeserializeObject<Dictionary<uint, LbRule>>(rulesJson);
             if (rules == null || rules.Count == 0) return false;
             cfg.ApplyPresets(rules, presetVersion);
-            Svc.Log.Info($"{PvpAutoLbConstants.LogPrefix} applied {rules.Count} preset rules (v{presetVersion})");
+            RunLog.Info($"applied {rules.Count} preset rules (v{presetVersion})");
             return true;
         }
         catch (Exception ex)
         {
-            Svc.Log.Warning(ex, $"{PvpAutoLbConstants.LogPrefix} preset apply failed");
+            RunLog.Warning(ex, "preset apply failed");
             return false;
         }
     }

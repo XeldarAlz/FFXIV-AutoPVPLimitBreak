@@ -112,6 +112,7 @@ body:
       description: |
         **If you can provide any of these, it turns guesswork into a fix.**
 
+        - **Plugin console**: open `/pvpautolb log` (or the terminal icon in the status window), press *Copy log* and paste the result into the console field below. It already includes the plugin version, Dalamud version and zone.
         - **Dalamud log**: open `/xllog`, click *Open log folder* (bottom-right), attach `dalamud.log`. Filter by `[PvpAutoLb]` to trim it.
         - **Screenshots / short clip** of the status window at the moment of the bug (readiness state, target, HP bar). The readiness pill (`READY` / `FIRING` / `PAUSED` / `OUT OF RANGE` / `GAUGE LOW` / `DEFENSIVE`) usually tells the whole story.
         - **Other plugins active** that touch input or PvP (rotation helpers, target plugins, etc.)
@@ -119,10 +120,10 @@ body:
   - type: textarea
     id: logs
     attributes:
-      label: Inline log excerpt (optional)
+      label: Console output (optional)
       description: |
-        Short snippets from `/xllog` filtered by `[PvpAutoLb]`. For full log files, use **Attachments** above.
-      render: shell
+        Paste what *Copy log* in the plugin console (`/pvpautolb log`) put on your clipboard. Short snippets from `/xllog` filtered by `[PvpAutoLb]` also belong here; attach full `dalamud.log` files under **Attachments** above.
+      render: text
 
   - type: textarea
     id: extra
