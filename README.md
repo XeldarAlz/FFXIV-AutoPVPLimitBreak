@@ -5,6 +5,7 @@
 <h1 align="center">Auto PVP LB</h1>
 
 <p align="center">
+  <a href="https://discord.gg/hppkAvdBEE"><img alt="Discord" src="https://img.shields.io/badge/Discord-join-5865F2?style=flat-square&logo=discord&logoColor=white"></a>
   <a href="https://github.com/XeldarAlz/FFXIV-AutoPVPLimitBreak/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/XeldarAlz/FFXIV-AutoPVPLimitBreak?style=flat-square&color=blue"></a>
   <a href="https://github.com/XeldarAlz/FFXIV-AutoPVPLimitBreak/releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/XeldarAlz/FFXIV-AutoPVPLimitBreak/total?style=flat-square&color=blue"></a>
   <a href="https://github.com/XeldarAlz/FFXIV-AutoPVPLimitBreak/actions/workflows/release.yml"><img alt="Build" src="https://img.shields.io/github/actions/workflow/status/XeldarAlz/FFXIV-AutoPVPLimitBreak/release.yml?style=flat-square"></a>
@@ -57,6 +58,7 @@ Tick **Enabled**, click **+**, then **Save and Close**. Open `/xlplugins` → **
 | `/palb` | Alias for `/pvpautolb` |
 | `/pvpautolb config` | Open settings |
 | `/pvpautolb log` | Open the console (every line the plugin logs, with Copy log for bug reports) |
+| `/pvpautolb changelog` | Open the changelog (what changed in each update, newest first) |
 
 ## Configuration
 
@@ -91,6 +93,12 @@ Limit Breaks are resolved from game data, so every job is wired up automatically
 | Reaper | 🛡 Tenebrae Lemurum | | Summoner | 🛡 Phoenix & Bahamut |
 | Viper | ✅ | | Red Mage | ✅ Southern Cross |
 |  |  | | Pictomancer | 🛡 Advent of Chocobastion |
+
+## Community
+
+Questions, ideas, or just want to hang out with other players? Come say hi on Discord.
+
+→ [Join our Discord](https://discord.gg/hppkAvdBEE)
 
 ## More from me
 

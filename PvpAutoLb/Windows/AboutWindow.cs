@@ -21,7 +21,7 @@ public sealed class AboutWindow : Window, IDisposable
     private const string WindowId = "PvpAutoLbAbout";
 
     private const string PatreonUrl = "https://www.patreon.com/XeldarAlz";
-    private const string DiscordUrl = "https://discord.gg/3HbJCscMyS";
+    private const string DiscordUrl = "https://discord.gg/hppkAvdBEE";
     private const string HubUrl = "https://github.com/XeldarAlz/DalamudPlugins";
     private const string Author = "XeldarAlz";
 
