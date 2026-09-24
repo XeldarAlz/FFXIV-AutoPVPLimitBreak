@@ -23,6 +23,8 @@ internal static class Styling
     public static readonly Vector4 AccentPink      = new(0.95f, 0.45f, 0.78f, 1.00f);
     public static readonly Vector4 AccentRose      = new(0.93f, 0.42f, 0.50f, 1.00f);
     public static readonly Vector4 AccentDiscord   = new(0.345f, 0.396f, 0.949f, 1.00f);
+    public static readonly Vector4 AccentPatreon   = new(1.000f, 0.259f, 0.302f, 1.00f);
+    public static readonly Vector4 AccentPatreonSoft = new(1.000f, 0.580f, 0.600f, 1.00f);
 
     public static readonly Vector4 CardBg          = new(0.08f, 0.09f, 0.11f, 0.82f);
     public static readonly Vector4 CardBgHero      = new(0.12f, 0.08f, 0.09f, 0.90f);
@@ -69,6 +71,8 @@ internal static class Styling
     public static Vector4 Lighten(Vector4 color, float amount) => Vector4.Lerp(color, Vector4.One, amount) with { W = color.W };
 
     public static Vector4 Darken(Vector4 color, float amount) => Vector4.Lerp(color, new Vector4(0f, 0f, 0f, color.W), amount) with { W = color.W };
+
+    public static Vector4 Tint(Vector4 baseColor, Vector4 accent, float amount) => Vector4.Lerp(baseColor, accent, amount) with { W = baseColor.W };
 
     public static void TextCentered(string text, Vector4 color, float fontScale = 1f)
     {

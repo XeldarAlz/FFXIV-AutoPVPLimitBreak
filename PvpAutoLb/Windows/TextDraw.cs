@@ -60,6 +60,28 @@ internal static class TextDraw
         }
     }
 
+    // An animated glyph grows through the draw list at an explicit size, so the window font scale is never touched.
+    public static void IconCentered(FontAwesomeIcon icon, Vector2 center, Vector4 color, float sizeScale)
+    {
+        using (ImRaii.PushFont(UiBuilder.IconFont))
+        {
+            var glyph = icon.ToIconString();
+            var size = Measure(glyph) * sizeScale;
+            ImGui.GetWindowDrawList().AddText(ImGui.GetFont(), ImGui.GetFontSize() * sizeScale, center - size * 0.5f, Paint.Col(color), glyph, 0f);
+        }
+    }
+
+    public static ScaledFont PushScale(float fontScale)
+    {
+        ImGui.SetWindowFontScale(fontScale);
+        return default;
+    }
+
+    public readonly ref struct ScaledFont
+    {
+        public void Dispose() => ImGui.SetWindowFontScale(1f);
+    }
+
     // A line that overflows its slot overflows on every frame it is drawn, so its cut is cached, and prefixes are measured
     // in place, so finding the cut allocates only the result.
     public static string Truncate(string text, float maxWidth)

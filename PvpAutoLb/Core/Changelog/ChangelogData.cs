@@ -10,6 +10,7 @@ internal static class ChangelogData
         [
             "Added the Console window to view, filter and copy the plugin's logs",
             "Added this changelog, with a badge whenever an update brings something new",
+            "Overhauled the About page, with the updated Discord link",
         ]),
     ];
 

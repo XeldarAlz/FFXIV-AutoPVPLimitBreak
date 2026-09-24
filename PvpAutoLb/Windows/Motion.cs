@@ -12,7 +12,7 @@ internal static class Motion
 
     private static readonly Dictionary<int, float> values = new();
 
-    private static bool Reduced => Plugin.PluginInterface.UiBuilder.ShouldUseReducedMotion;
+    public static bool Reduced => Plugin.PluginInterface.UiBuilder.ShouldUseReducedMotion;
 
     public static int Key(string id) => unchecked((int)ImGui.GetID(id));
 
@@ -38,4 +38,14 @@ internal static class Motion
     }
 
     public static float Hover(int key, bool hovered) => Approach(key, hovered ? 1f : 0f, HoverSpeed);
+
+    public static float EaseOutCubic(float progress)
+    {
+        var remaining = 1f - progress;
+        return 1f - remaining * remaining * remaining;
+    }
+
+    public static float Smoothstep(float progress) => progress * progress * (3f - 2f * progress);
+
+    public static float Wave(double periodMs) => MathF.Sin(Styling.Phase(periodMs) * MathF.PI * 2f);
 }

@@ -1,5 +1,7 @@
+using System;
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
+using Dalamud.Interface.Utility;
 
 namespace PvpAutoLb.Windows;
 
@@ -11,6 +13,45 @@ internal static class Paint
 
     public static void Fill(ImDrawListPtr drawList, Vector2 min, Vector2 max, Vector4 color, float rounding, ImDrawFlags flags = ImDrawFlags.RoundCornersAll)
         => drawList.AddRectFilled(min, max, Col(color), rounding, flags);
+
+    private static uint Opaque(Vector4 color) => ImGui.ColorConvertFloat4ToU32(color with { W = 1f });
+
+    public static void Gradient(ImDrawListPtr drawList, Vector2 min, Vector2 max, Vector4 top, Vector4 bottom, float rounding)
+    {
+        var start = drawList.VtxBuffer.Size;
+        drawList.AddRectFilled(min, max, Col(new Vector4(1f, 1f, 1f, top.W)), rounding);
+        var end = drawList.VtxBuffer.Size;
+        ImGuiP.ShadeVertsLinearColorGradientKeepAlpha(drawList, start, end, min, new Vector2(min.X, max.Y), Opaque(top), Opaque(bottom));
+    }
+
+    public static void GradientH(ImDrawListPtr drawList, Vector2 min, Vector2 max, Vector4 left, Vector4 right, float rounding)
+    {
+        var start = drawList.VtxBuffer.Size;
+        drawList.AddRectFilled(min, max, Col(new Vector4(1f, 1f, 1f, left.W)), rounding);
+        var end = drawList.VtxBuffer.Size;
+        ImGuiP.ShadeVertsLinearColorGradientKeepAlpha(drawList, start, end, min, new Vector2(max.X, min.Y), Opaque(left), Opaque(right));
+    }
+
+    public static void Glow(ImDrawListPtr drawList, Vector2 min, Vector2 max, float rounding, Vector4 color, float intensity)
+    {
+        var scale = ImGuiHelpers.GlobalScale;
+        for (var layer = 3; layer >= 1; layer--)
+        {
+            var grow = new Vector2(layer * 3f * scale, layer * 3f * scale);
+            var alpha = 0.04f * (4 - layer) * intensity;
+            drawList.AddRectFilled(min - grow, max + grow, Col(Styling.WithAlpha(color, alpha)), rounding + grow.X);
+        }
+    }
+
+    public static void Glass(ImDrawListPtr drawList, Vector2 min, Vector2 max, float rounding, Vector4 accent, float tint)
+    {
+        var top = Vector4.Lerp(Styling.CardBgHover, accent, tint * 1.3f) with { W = 0.97f };
+        var bottom = Vector4.Lerp(Styling.CardBg, accent, tint * 0.8f) with { W = 0.97f };
+        Gradient(drawList, min, max, top, bottom, rounding);
+        TopLight(drawList, min, max, rounding);
+        var border = Vector4.Lerp(Styling.WithAlpha(Styling.BorderDim, 0.75f), Styling.WithAlpha(accent, 0.9f), Math.Clamp(tint * 2.2f, 0f, 1f));
+        Stroke(drawList, min, max, border, rounding);
+    }
 
     public static void Stroke(ImDrawListPtr drawList, Vector2 min, Vector2 max, Vector4 color, float rounding, float thickness = 1f)
         => drawList.AddRect(min, max, Col(color), rounding, ImDrawFlags.RoundCornersAll, thickness);
