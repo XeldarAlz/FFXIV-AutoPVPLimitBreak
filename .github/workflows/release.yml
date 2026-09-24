@@ -130,7 +130,24 @@ jobs:
 
           $title = if ([string]::IsNullOrEmpty($rel.name)) { $rel.tagName } else { $rel.name }
 
-          $desc = if ($null -eq $rel.body) { '' } else { [string]$rel.body }
+          $version       = $rel.tagName.TrimStart('v')
+          $changelogData = Get-Content -Raw -Path 'PvpAutoLb/Core/Changelog/ChangelogData.cs'
+          $localization  = Get-Content -Raw -Path 'PvpAutoLb/Core/Localization/L.cs'
+          $highlights    = [System.Collections.Generic.List[string]]::new()
+          $entry = [regex]::Match($changelogData, 'new\("' + [regex]::Escape($version) + '",\s*"[^"]*",\s*L\.Changelog\.(\w+)\)')
+          if ($entry.Success) {
+            $block = [regex]::Match($localization, 'LocString\[\]\s+' + $entry.Groups[1].Value + '\s*=\s*\[(.*?)\];', 'Singleline')
+            foreach ($line in [regex]::Matches($block.Groups[1].Value, 'new\("[^"]*",\s*"(.*?)"\)')) {
+              $highlights.Add('• ' + [regex]::Unescape($line.Groups[1].Value))
+            }
+          }
+
+          if ($highlights.Count -gt 0) {
+            $desc = $highlights -join "`n"
+          } else {
+            Write-Host "::warning::No changelog entry for $version in ChangelogData.cs; falling back to the GitHub release notes."
+            $desc = if ($null -eq $rel.body) { '' } else { [string]$rel.body }
+          }
           $desc = $desc.Replace("`r", '').Replace([char]0x2014, '-').Replace([char]0x2013, '-')
           if ($desc.Length -gt 3800) { $desc = $desc.Substring(0, 3800) + "`n`n...full notes on GitHub" }
 
