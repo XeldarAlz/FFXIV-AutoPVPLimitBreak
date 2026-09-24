@@ -106,6 +106,79 @@ jobs:
           echo "total=$total" >> "$GITHUB_OUTPUT"
           echo "Total downloads across all releases: $total"
 
+      - name: Announce the release on Discord
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          WEBHOOK_URL: ${{ secrets.RELEASE_WEBHOOK_URL }}
+          PING_ROLE_ID: ${{ vars.RELEASE_PING_ROLE_ID }}
+          TAG: ${{ steps.tag.outputs.target }}
+          DOWNLOADS: ${{ steps.count.outputs.total }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ([string]::IsNullOrWhiteSpace($env:WEBHOOK_URL)) {
+            Write-Host 'RELEASE_WEBHOOK_URL not set; skipping the announcement.'
+            exit 0
+          }
+
+          $plugin  = 'Auto PVP LB'
+          $icon    = "https://raw.githubusercontent.com/$($env:GH_REPO)/master/PvpAutoLb/Images/Icon.png"
+          $relList = "https://github.com/$($env:GH_REPO)/releases"
+
+          $rel = gh release view $env:TAG --json name,tagName,body,url,isPrerelease,publishedAt | ConvertFrom-Json
+
+          $title = if ([string]::IsNullOrEmpty($rel.name)) { $rel.tagName } else { $rel.name }
+
+          $desc = if ($null -eq $rel.body) { '' } else { [string]$rel.body }
+          $desc = $desc.Replace("`r", '').Replace([char]0x2014, '-').Replace([char]0x2013, '-')
+          if ($desc.Length -gt 3800) { $desc = $desc.Substring(0, 3800) + "`n`n...full notes on GitHub" }
+
+          $isPre   = [bool]$rel.isPrerelease
+          $content = if ($isPre) { '🧪 **New preview build just dropped!**' } else { '🚀 **New version dropped!**' }
+          $pingRole = $env:PING_ROLE_ID
+          if (-not [string]::IsNullOrWhiteSpace($pingRole)) {
+            $content = "<@&$pingRole> $content"
+          }
+          $color   = if ($isPre) { 10197915 } else { 9132790 }
+          $channel = if ($isPre) { 'Preview' } else { 'Stable' }
+
+          $fields = @(
+            [ordered]@{ name = 'Version'; value = '`' + $rel.tagName + '`'; inline = $true }
+            [ordered]@{ name = 'Channel'; value = $channel; inline = $true }
+          )
+          if (-not [string]::IsNullOrWhiteSpace($env:DOWNLOADS)) {
+            $fields += [ordered]@{ name = 'Total installs'; value = "$($env:DOWNLOADS)"; inline = $true }
+          }
+
+          $payload = [ordered]@{
+            username   = $plugin
+            avatar_url = $icon
+            content    = $content
+            embeds     = @(
+              [ordered]@{
+                author      = [ordered]@{ name = $plugin; url = $relList; icon_url = $icon }
+                title       = $title
+                url         = $rel.url
+                description = $desc
+                color       = $color
+                fields      = $fields
+                thumbnail   = [ordered]@{ url = $icon }
+                footer      = [ordered]@{ text = $plugin; icon_url = $icon }
+                timestamp   = $rel.publishedAt
+              }
+            )
+          }
+
+          if (-not [string]::IsNullOrWhiteSpace($pingRole)) {
+            $payload['allowed_mentions'] = [ordered]@{ roles = @($pingRole) }
+          }
+
+          $json = $payload | ConvertTo-Json -Depth 10
+          $bytes = [System.Text.Encoding]::UTF8.GetBytes($json)
+          $resp  = Invoke-WebRequest -Uri $env:WEBHOOK_URL -Method Post -Body $bytes -ContentType 'application/json; charset=utf-8' -UseBasicParsing
+          Write-Host "Discord responded: $($resp.StatusCode) $($resp.StatusDescription) for $($env:TAG)"
+
       - name: Update local repo.json
         shell: pwsh
         run: |
