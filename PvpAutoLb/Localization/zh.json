@@ -163,6 +163,7 @@
   "changelog.new": "新",
   "changelog.changes.one": "{0} 项更改",
   "changelog.changes.other": "{0} 项更改",
+  "changelog.r1300.1": "修复：在纷争前线中，战斗HUD显示的敌人消失时游戏会崩溃",
   "changelog.r1200.1": "新增控制台页面，可查看、筛选和复制插件日志",
   "changelog.r1200.2": "新增此更新日志，更新带来新内容时会显示徽章",
   "changelog.r1200.3": "重做关于页面，并更新了Discord链接",

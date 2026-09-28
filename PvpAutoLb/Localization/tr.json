@@ -163,6 +163,7 @@
   "changelog.new": "Yeni",
   "changelog.changes.one": "{0} değişiklik",
   "changelog.changes.other": "{0} değişiklik",
+  "changelog.r1300.1": "Düzeltildi: Frontline'da savaş HUD'unda gösterilen düşman kaybolduğunda oyun çöküyordu",
   "changelog.r1200.1": "Eklentinin günlüklerini görüntülemek, filtrelemek ve kopyalamak için Konsol sayfası eklendi",
   "changelog.r1200.2": "Bu değişiklik listesi eklendi, bir güncelleme yenilik getirdiğinde rozet gösterilir",
   "changelog.r1200.3": "Hakkında sayfası yenilendi, güncel Discord bağlantısı eklendi",

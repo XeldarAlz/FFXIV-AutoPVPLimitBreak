@@ -163,6 +163,7 @@
   "changelog.new": "Novo",
   "changelog.changes.one": "{0} mudança",
   "changelog.changes.other": "{0} mudanças",
+  "changelog.r1300.1": "Corrigido: o jogo travava em Frontline quando o inimigo exibido no HUD de combate sumia",
   "changelog.r1200.1": "Adicionada a página Console para ver, filtrar e copiar os logs do plugin",
   "changelog.r1200.2": "Adicionadas estas novidades, com um selo sempre que uma atualização traz algo novo",
   "changelog.r1200.3": "Página Sobre reformulada, com o link atualizado do Discord",

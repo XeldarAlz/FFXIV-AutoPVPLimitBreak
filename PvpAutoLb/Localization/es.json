@@ -163,6 +163,7 @@
   "changelog.new": "Nuevo",
   "changelog.changes.one": "{0} cambio",
   "changelog.changes.other": "{0} cambios",
+  "changelog.r1300.1": "Corregido: el juego se cerraba en Frontline cuando desaparecía el enemigo mostrado en el HUD de combate",
   "changelog.r1200.1": "Añadida la página Consola para ver, filtrar y copiar los registros del plugin",
   "changelog.r1200.2": "Se añadieron estas novedades, con una insignia cada vez que una actualización trae algo nuevo",
   "changelog.r1200.3": "Se renovó la página Acerca de, con el enlace de Discord actualizado",

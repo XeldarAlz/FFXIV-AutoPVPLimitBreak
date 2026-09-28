@@ -242,7 +242,7 @@ internal sealed class LiveSnapshot
 
     private IBattleChara? PickTarget(AutoLbController controller, Configuration configuration)
     {
-        if (controller.LastResolvedTarget is { IsDead: false } resolved)
+        if (FindLive(controller.LastResolvedTargetId) is { IsDead: false } resolved)
         {
             return resolved;
         }
@@ -253,6 +253,24 @@ internal sealed class LiveSnapshot
         }
 
         return candidates.Count > 0 ? candidates[0] : null;
+    }
+
+    private IBattleChara? FindLive(ulong gameObjectId)
+    {
+        if (gameObjectId == 0UL)
+        {
+            return null;
+        }
+
+        for (var index = 0; index < candidates.Count; index++)
+        {
+            if (candidates[index].GameObjectId == gameObjectId)
+            {
+                return candidates[index];
+            }
+        }
+
+        return Svc.Objects.SearchById(gameObjectId) as IBattleChara;
     }
 
     private LiveKind ResolveSupport(Configuration configuration)

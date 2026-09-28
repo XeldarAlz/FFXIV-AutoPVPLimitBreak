@@ -163,6 +163,7 @@
   "changelog.new": "Neu",
   "changelog.changes.one": "{0} Änderung",
   "changelog.changes.other": "{0} Änderungen",
+  "changelog.r1300.1": "Behoben: Das Spiel stürzte in Frontline ab, wenn der im Kampf-HUD angezeigte Gegner verschwand",
   "changelog.r1200.1": "Konsole hinzugefügt, um die Protokolle des Plugins anzusehen, zu filtern und zu kopieren",
   "changelog.r1200.2": "Dieses Änderungsprotokoll hinzugefügt, mit einem Abzeichen, sobald ein Update etwas Neues bringt",
   "changelog.r1200.3": "Die Über-Seite überarbeitet, mit dem aktualisierten Discord-Link",

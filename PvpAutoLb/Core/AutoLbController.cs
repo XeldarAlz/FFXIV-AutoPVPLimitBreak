@@ -20,8 +20,7 @@ internal sealed class AutoLbController : IDisposable
     public SessionStats Stats { get; }
 
     public DateTime? LastFiredUtc => firer.LastFiredUtc;
-    public IBattleChara? LastResolvedTarget { get; private set; }
-    public LbTargetingProfile LastProfile { get; private set; } = LbTargetingProfile.None;
+    public ulong LastResolvedTargetId { get; private set; }
     public int LastEnemiesAffected { get; private set; }
 
     public AutoLbController(Configuration cfg)
@@ -62,7 +61,6 @@ internal sealed class AutoLbController : IDisposable
 
         var jobId = Player.Object!.ClassJob.RowId;
         var profile = LbCatalog.ResolveProfile(jobId);
-        LastProfile = profile;
         if (profile.ActionId == 0) { ClearState(); return; }
 
         var rule = cfg.EffectiveRuleFor(jobId);
@@ -85,7 +83,7 @@ internal sealed class AutoLbController : IDisposable
     private void TickAutoSelect(uint jobId, LbTargetingProfile profile, LbRule rule, IReadOnlyList<IBattleChara> hostiles)
     {
         var decision = FireDecisionMaker.Decide(profile, rule, cfg, hostiles, EmptyAllies, HpTracker);
-        LastResolvedTarget = decision?.HardTarget;
+        LastResolvedTargetId = decision?.HardTarget.GameObjectId ?? 0UL;
         LastEnemiesAffected = decision?.EnemiesAffected ?? 0;
         if (decision == null) return;
         if (BlocklistFilter.IsBlocked(decision.HardTarget, cfg.NameBlocklist)) return;
@@ -99,7 +97,7 @@ internal sealed class AutoLbController : IDisposable
         var allies = TargetSelector.ScanAllies(scanRange, includeSelf: true);
 
         var decision = FireDecisionMaker.Decide(profile, rule, cfg, hostiles, allies, HpTracker);
-        LastResolvedTarget = decision?.HardTarget;
+        LastResolvedTargetId = decision?.HardTarget.GameObjectId ?? 0UL;
         LastEnemiesAffected = 0;
         if (decision == null) return;
 
@@ -110,11 +108,11 @@ internal sealed class AutoLbController : IDisposable
     {
         if (Svc.Targets.Target is not IBattleChara manual || manual.IsDead)
         {
-            LastResolvedTarget = null;
+            LastResolvedTargetId = 0UL;
             LastEnemiesAffected = 0;
             return;
         }
-        LastResolvedTarget = manual;
+        LastResolvedTargetId = manual.GameObjectId;
         if (!HpMath.IsBelowThreshold(manual, cfg, jobId))
         {
             LastEnemiesAffected = 0;
@@ -145,7 +143,7 @@ internal sealed class AutoLbController : IDisposable
 
     private void ClearState()
     {
-        LastResolvedTarget = null;
+        LastResolvedTargetId = 0UL;
         LastEnemiesAffected = 0;
     }
 }

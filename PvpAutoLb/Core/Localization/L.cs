@@ -197,6 +197,11 @@ internal static class L
         public static readonly LocString New = new("changelog.new", "New");
         public static readonly LocPlural Changes = new("changelog.changes", "{0} change", "{0} changes");
 
+        public static readonly LocString[] Release1300 =
+        [
+            new("changelog.r1300.1", "Fixed the game crashing in Frontline when the enemy shown on the combat HUD disappeared"),
+        ];
+
         public static readonly LocString[] Release1200 =
         [
             new("changelog.r1200.1", "Added the Console page to view, filter and copy the plugin's logs"),
