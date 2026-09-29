@@ -163,6 +163,7 @@
   "changelog.new": "Nouveau",
   "changelog.changes.one": "{0} changement",
   "changelog.changes.other": "{0} changements",
+  "changelog.r1310.1": "Ajout d'un bouton Buy Me a Coffee sous Patreon sur la page À propos",
   "changelog.r1300.1": "Correction : le jeu plantait en Front quand l'ennemi affiché sur le HUD de combat disparaissait",
   "changelog.r1200.1": "Ajout de la page Console pour consulter, filtrer et copier les journaux du plugin",
   "changelog.r1200.2": "Ajout de ces nouveautés, avec un badge dès qu'une mise à jour apporte du neuf",

@@ -163,6 +163,7 @@
   "changelog.new": "新着",
   "changelog.changes.one": "{0}件の変更",
   "changelog.changes.other": "{0}件の変更",
+  "changelog.r1310.1": "情報ページのPatreonの下にBuy Me a Coffeeボタンを追加",
   "changelog.r1300.1": "修正：フロントラインで戦闘HUDに表示中の敵が消えるとゲームがクラッシュしていた問題",
   "changelog.r1200.1": "プラグインのログを表示、絞り込み、コピーできるコンソールを追加",
   "changelog.r1200.2": "この更新履歴を追加。新しい内容がある更新ではバッジを表示",

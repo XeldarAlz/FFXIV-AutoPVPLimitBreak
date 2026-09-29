@@ -163,6 +163,7 @@
   "changelog.new": "New",
   "changelog.changes.one": "{0} change",
   "changelog.changes.other": "{0} changes",
+  "changelog.r1310.1": "Added a Buy Me a Coffee button under Patreon on the About page",
   "changelog.r1300.1": "Fixed the game crashing in Frontline when the enemy shown on the combat HUD disappeared",
   "changelog.r1200.1": "Added the Console page to view, filter and copy the plugin's logs",
   "changelog.r1200.2": "Added this changelog, with a badge whenever an update brings something new",
