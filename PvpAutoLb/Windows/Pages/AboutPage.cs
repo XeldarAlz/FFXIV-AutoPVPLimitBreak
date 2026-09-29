@@ -16,6 +16,7 @@ internal sealed partial class AboutPage
     private const string RepoUrl = "https://github.com/XeldarAlz/FFXIV-AutoPVPLimitBreak";
     private const string DiscordUrl = "https://discord.gg/hppkAvdBEE";
     private const string PatreonUrl = "https://www.patreon.com/XeldarAlz";
+    private const string BuyMeACoffeeUrl = "https://buymeacoffee.com/xeldaralz";
 
     private const float MaxColumnWidth = 860f;
     private const float SectionGap = 22f;

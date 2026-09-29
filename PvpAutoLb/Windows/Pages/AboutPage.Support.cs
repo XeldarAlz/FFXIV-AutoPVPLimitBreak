@@ -9,23 +9,30 @@ namespace PvpAutoLb.Windows.Pages;
 
 internal sealed partial class AboutPage
 {
-    private const string PatreonId = "##palb_about_patreon";
     private const float SupportPad = 24f;
     private const float SupportMedallion = 30f;
     private const float SupportTextGap = 20f;
     private const float SupportButtonGap = 20f;
+    private const float SupportButtonSpacing = 12f;
     private const float SupportButtonHeight = 52f;
     private const float ButtonGrow = 3f;
     private const float ButtonContentGap = 10f;
-    private const int FloatingHearts = 9;
+    private const int FloatingIcons = 10;
     private const int CometTrail = 26;
     private const double CometPeriodMs = 5200.0;
-    private const int BurstHearts = 14;
+    private const int BurstIcons = 14;
     private const float BurstMs = 950f;
     private const float BurstDistance = 90f;
     private const float GoldenRatio = 0.618034f;
 
-    private long burstTick = long.MinValue / 2;
+    private static readonly SupportButtonStyle Patreon = new("##palb_about_patreon", PatreonUrl, L.About.SupportButton, L.About.PatreonHint,
+        FontAwesomeIcon.HandHoldingHeart, FontAwesomeIcon.Heart, Styling.AccentPatreon, Styling.AccentPink, Styling.TextStrong, Styling.AccentPatreonSoft);
+
+    private static readonly SupportButtonStyle Coffee = new("##palb_about_coffee", BuyMeACoffeeUrl, L.About.CoffeeButton, L.About.CoffeeHint,
+        FontAwesomeIcon.MugHot, FontAwesomeIcon.MugHot, Styling.AccentCoffee, Styling.AccentCoffeeDeep, Styling.InkOnCoffee, Styling.AccentCoffee);
+
+    private long patreonBurstTick = long.MinValue / 2;
+    private long coffeeBurstTick = long.MinValue / 2;
 
     private void DrawSupport()
     {
@@ -49,14 +56,15 @@ internal sealed partial class AboutPage
         var textHeight = titleHeight + 6f * scale + bodyHeight;
         var topHeight = MathF.Max(radius * 2f, textHeight);
         var buttonHeight = SupportButtonHeight * scale;
-        var height = pad + topHeight + SupportButtonGap * scale + buttonHeight + pad;
+        var buttonSpacing = SupportButtonSpacing * scale;
+        var height = pad + topHeight + SupportButtonGap * scale + buttonHeight * 2f + buttonSpacing + pad;
         var max = origin + new Vector2(columnWidth, height);
         var rounding = Styling.CardRounding * 1.6f * scale;
 
         Paint.Shadow(drawList, origin, max, rounding, 16f * scale, 0.5f);
-        Paint.Gradient(drawList, origin, max, Styling.Tint(Styling.Surface2, Styling.AccentPatreon, 0.16f), Styling.Tint(Styling.Surface0, Styling.AccentPatreon, 0.05f), rounding);
+        Paint.Gradient(drawList, origin, max, Styling.Tint(Styling.Surface2, Styling.AccentPatreon, 0.16f), Styling.Tint(Styling.Surface0, Styling.AccentCoffee, 0.10f), rounding);
         drawList.PushClipRect(origin, max, true);
-        DrawFloatingHearts(origin, max);
+        DrawFloatingIcons(origin, max);
         drawList.PopClipRect();
         Paint.TopLight(drawList, origin, max, rounding, 0.14f);
         Paint.Stroke(drawList, origin, max, Styling.WithAlpha(Styling.AccentPatreon, 0.35f), rounding, 1.2f * scale);
@@ -77,14 +85,16 @@ internal sealed partial class AboutPage
 
         TextDraw.Wrapped(body, new Vector2(textX, textY + titleHeight + 6f * scale), textWidth, Styling.TextSecondary);
 
-        var buttonMin = new Vector2(origin.X + pad, max.Y - pad - buttonHeight);
-        DrawPatreonButton(buttonMin, new Vector2(columnWidth - pad * 2f, buttonHeight));
+        var buttonSize = new Vector2(columnWidth - pad * 2f, buttonHeight);
+        var firstButton = new Vector2(origin.X + pad, max.Y - pad - buttonHeight * 2f - buttonSpacing);
+        DrawSupportButton(Patreon, firstButton, buttonSize, ref patreonBurstTick);
+        DrawSupportButton(Coffee, firstButton + new Vector2(0f, buttonHeight + buttonSpacing), buttonSize, ref coffeeBurstTick);
 
         ImGui.SetCursorScreenPos(origin);
         ImGui.Dummy(new Vector2(columnWidth, height));
     }
 
-    private static void DrawFloatingHearts(Vector2 min, Vector2 max)
+    private static void DrawFloatingIcons(Vector2 min, Vector2 max)
     {
         if (Motion.Reduced)
         {
@@ -94,14 +104,17 @@ internal sealed partial class AboutPage
         var width = max.X - min.X;
         var height = max.Y - min.Y;
         var scale = ImGuiHelpers.GlobalScale;
-        for (var index = 0; index < FloatingHearts; index++)
+        for (var index = 0; index < FloatingIcons; index++)
         {
             var seed = index * GoldenRatio % 1f;
             var progress = (Styling.Phase(6200.0 + index * 870.0) + seed) % 1f;
             var drift = MathF.Sin(progress * MathF.PI * 2.6f + index) * 10f * scale;
             var position = new Vector2(min.X + width * (0.06f + 0.88f * seed) + drift, max.Y + 12f * scale - progress * (height + 24f * scale));
             var alpha = 0.16f * MathF.Sin(progress * MathF.PI);
-            TextDraw.IconCentered(FontAwesomeIcon.Heart, position, Styling.WithAlpha(Styling.AccentPatreonSoft, alpha), 0.55f + 0.45f * (index * 0.37f % 1f));
+            var isHeart = index % 2 == 0;
+            var icon = isHeart ? FontAwesomeIcon.Heart : FontAwesomeIcon.MugHot;
+            var color = isHeart ? Styling.AccentPatreonSoft : Styling.AccentCoffee;
+            TextDraw.IconCentered(icon, position, Styling.WithAlpha(color, alpha), 0.55f + 0.45f * (index * 0.37f % 1f));
         }
     }
 
@@ -125,7 +138,8 @@ internal sealed partial class AboutPage
         {
             var fade = 1f - trailIndex / (float)CometTrail;
             var point = PerimeterPoint(innerMin, innerMax, head - trailIndex * spacing, perimeter);
-            drawList.AddCircleFilled(point, (1f + 1.6f * fade) * scale, Paint.Col(Styling.WithAlpha(Styling.AccentPatreonSoft, 0.85f * fade * fade)));
+            var color = Vector4.Lerp(Styling.AccentCoffee, Styling.AccentPatreonSoft, fade);
+            drawList.AddCircleFilled(point, (1f + 1.6f * fade) * scale, Paint.Col(Styling.WithAlpha(color, 0.85f * fade * fade)));
         }
 
         var headPoint = PerimeterPoint(innerMin, innerMax, head, perimeter);
@@ -162,25 +176,25 @@ internal sealed partial class AboutPage
         return new Vector2(min.X, max.Y - (distance - width));
     }
 
-    private void DrawPatreonButton(Vector2 slot, Vector2 size)
+    private static void DrawSupportButton(in SupportButtonStyle style, Vector2 slot, Vector2 size, ref long burstTick)
     {
         var scale = ImGuiHelpers.GlobalScale;
         ImGui.SetCursorScreenPos(slot);
-        var hit = Hit.Area(PatreonId, size);
-        var hover = Motion.Hover(Motion.Key(PatreonId), hit.Hovered);
-        var press = Motion.Approach(Motion.Key(PatreonId, 1), hit.Held ? 1f : 0f, 30f);
+        var hit = Hit.Area(style.Id, size);
+        var hover = Motion.Hover(Motion.Key(style.Id), hit.Hovered);
+        var press = Motion.Approach(Motion.Key(style.Id, 1), hit.Held ? 1f : 0f, 30f);
         if (hit.Hovered)
         {
-            Tooltip.Show(Loc.T(L.About.PatreonHint));
+            Tooltip.Show(Loc.T(style.Hint));
             if (ImGui.IsMouseClicked(ImGuiMouseButton.Right))
             {
-                ImGui.SetClipboardText(PatreonUrl);
+                ImGui.SetClipboardText(style.Url);
             }
         }
 
         if (hit.Clicked)
         {
-            OpenUrl(PatreonUrl);
+            OpenUrl(style.Url);
             burstTick = Environment.TickCount64;
         }
 
@@ -196,40 +210,40 @@ internal sealed partial class AboutPage
             var spread = layer * 3f * scale;
             var alpha = 0.05f * layer * breath * (1f + 1.2f * hover);
             drawList.AddRectFilled(min - new Vector2(spread, spread), max + new Vector2(spread, spread),
-                Paint.Col(Styling.WithAlpha(Styling.AccentPatreon, alpha)), rounding + spread);
+                Paint.Col(Styling.WithAlpha(style.Left, alpha)), rounding + spread);
         }
 
-        var left = Styling.Darken(Styling.Lighten(Styling.AccentPatreon, 0.14f * hover), 0.12f * press);
-        var right = Styling.Darken(Styling.Lighten(Styling.AccentPink, 0.14f * hover), 0.12f * press);
+        var left = Styling.Darken(Styling.Lighten(style.Left, 0.14f * hover), 0.12f * press);
+        var right = Styling.Darken(Styling.Lighten(style.Right, 0.14f * hover), 0.12f * press);
         Paint.GradientH(drawList, min, max, left, right, rounding);
         Paint.TopLight(drawList, min, max, rounding, 0.30f);
         Sheen(drawList, min, max - min, hover);
         Paint.Stroke(drawList, min, max, new Vector4(1f, 1f, 1f, 0.18f + 0.30f * hover), rounding, 1.2f * scale);
 
-        DrawButtonContent(min, max, hover);
-        DrawBurst(drawList, (min + max) * 0.5f);
+        DrawButtonContent(style, min, max, hover);
+        DrawBurst(style, (min + max) * 0.5f, burstTick);
     }
 
-    private static void DrawButtonContent(Vector2 min, Vector2 max, float hover)
+    private static void DrawButtonContent(in SupportButtonStyle style, Vector2 min, Vector2 max, float hover)
     {
         var scale = ImGuiHelpers.GlobalScale;
-        var label = Loc.T(L.About.SupportButton);
+        var label = Loc.T(style.Label);
         using var font = Fonts.PushHeadline();
         var labelSize = TextDraw.Measure(label);
-        var heartSize = TextDraw.IconSize(FontAwesomeIcon.HandHoldingHeart);
+        var iconSize = TextDraw.IconSize(style.Icon);
         var arrowSize = TextDraw.IconSize(FontAwesomeIcon.ArrowRight);
         var gap = ButtonContentGap * scale;
-        var contentWidth = heartSize.X + gap + labelSize.X + gap + arrowSize.X;
+        var contentWidth = iconSize.X + gap + labelSize.X + gap + arrowSize.X;
         var x = (min.X + max.X - contentWidth) * 0.5f;
         var midY = (min.Y + max.Y) * 0.5f;
         var beat = Motion.Reduced ? 0f : Heartbeat(1400.0);
 
-        TextDraw.IconCentered(FontAwesomeIcon.HandHoldingHeart, new Vector2(x + heartSize.X * 0.5f, midY), Styling.TextStrong, 1f + 0.12f * beat);
-        x += heartSize.X + gap;
-        TextDraw.At(label, new Vector2(x, midY - labelSize.Y * 0.5f), Styling.TextStrong);
+        TextDraw.IconCentered(style.Icon, new Vector2(x + iconSize.X * 0.5f, midY), style.Ink, 1f + 0.12f * beat);
+        x += iconSize.X + gap;
+        TextDraw.At(label, new Vector2(x, midY - labelSize.Y * 0.5f), style.Ink);
         x += labelSize.X + gap;
         TextDraw.Icon(FontAwesomeIcon.ArrowRight, new Vector2(x + ArrowSlide * scale * hover, midY - arrowSize.Y * 0.5f),
-            Styling.WithAlpha(Styling.TextStrong, 0.55f + 0.45f * hover));
+            Styling.WithAlpha(style.Ink, 0.55f + 0.45f * hover));
     }
 
     // A slanted band of light crosses the button every few seconds, and keeps crossing while it is hovered.
@@ -260,7 +274,7 @@ internal sealed partial class AboutPage
         drawList.PopClipRect();
     }
 
-    private void DrawBurst(ImDrawListPtr drawList, Vector2 center)
+    private static void DrawBurst(in SupportButtonStyle style, Vector2 center, long burstTick)
     {
         var elapsed = Environment.TickCount64 - burstTick;
         if (Motion.Reduced || elapsed >= BurstMs)
@@ -271,13 +285,13 @@ internal sealed partial class AboutPage
         var scale = ImGuiHelpers.GlobalScale;
         var progress = elapsed / BurstMs;
         var eased = Motion.EaseOutCubic(progress);
-        for (var index = 0; index < BurstHearts; index++)
+        for (var index = 0; index < BurstIcons; index++)
         {
-            var angle = index * MathF.PI * 2f / BurstHearts + index * 0.35f;
+            var angle = index * MathF.PI * 2f / BurstIcons + index * 0.35f;
             var distance = BurstDistance * scale * eased * (0.7f + 0.3f * (index * GoldenRatio % 1f));
             var position = center + new Vector2(MathF.Cos(angle) * 1.6f, MathF.Sin(angle)) * distance;
-            var color = index % 2 == 0 ? Styling.AccentPatreonSoft : Styling.Lighten(Styling.AccentPink, 0.3f);
-            TextDraw.IconCentered(FontAwesomeIcon.Heart, position, Styling.WithAlpha(color, 1f - progress), 0.6f + 0.5f * (1f - progress));
+            var color = index % 2 == 0 ? style.Burst : Styling.Lighten(style.Right, 0.3f);
+            TextDraw.IconCentered(style.BurstIcon, position, Styling.WithAlpha(color, 1f - progress), 0.6f + 0.5f * (1f - progress));
         }
     }
 
@@ -297,4 +311,16 @@ internal sealed partial class AboutPage
 
         return 0.5f * (1f + MathF.Cos(distance * MathF.PI));
     }
+
+    private readonly record struct SupportButtonStyle(
+        string Id,
+        string Url,
+        LocString Label,
+        LocString Hint,
+        FontAwesomeIcon Icon,
+        FontAwesomeIcon BurstIcon,
+        Vector4 Left,
+        Vector4 Right,
+        Vector4 Ink,
+        Vector4 Burst);
 }
