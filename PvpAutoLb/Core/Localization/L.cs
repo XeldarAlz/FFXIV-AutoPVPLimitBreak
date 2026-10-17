@@ -197,6 +197,11 @@ internal static class L
         public static readonly LocString New = new("changelog.new", "New");
         public static readonly LocPlural Changes = new("changelog.changes", "{0} change", "{0} changes");
 
+        public static readonly LocString[] Release1400 =
+        [
+            new("changelog.r1400.1", "Fixed ground-targeted limit breaks, such as Summoner's and Sage's, opening the placement cursor and never landing: they are now placed at the target, or on yourself for defensive ones"),
+        ];
+
         public static readonly LocString[] Release1310 =
         [
             new("changelog.r1310.1", "Added a Buy Me a Coffee button under Patreon on the About page"),
