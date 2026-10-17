@@ -41,7 +41,12 @@ internal sealed class LbFirer
             if (!ready) continue;
 
             swapper.Swap(target);
-            if (ActionExec.TryUse(actionId, targetId))
+            // Summon Bahamut and Mesotes want a placement: on the target for an offensive rule, on the player for a
+            // defensive or utility one, which is what the decision hands over as the hard target in either case.
+            var used = LbCatalog.ProfileFor(actionId).TargetArea
+                ? ActionExec.TryUseAt(actionId, targetId, target.Position)
+                : ActionExec.TryUse(actionId, targetId);
+            if (used)
                 pendingByAction[actionId] = true;
         }
         return false;

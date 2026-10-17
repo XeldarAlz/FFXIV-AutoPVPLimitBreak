@@ -22,7 +22,11 @@ internal static class LbCatalog
     public static LbTargetingProfile ResolveProfile(uint classJobId)
     {
         var ids = ResolveActionIds(classJobId);
-        var actionId = ids.Count > 0 ? ids[0] : 0u;
+        return ids.Count > 0 ? ProfileFor(ids[0]) : LbTargetingProfile.None;
+    }
+
+    public static LbTargetingProfile ProfileFor(uint actionId)
+    {
         if (actionId == 0) return LbTargetingProfile.None;
         if (!ProfileCache.TryGetValue(actionId, out var p))
         {
@@ -92,8 +96,10 @@ internal static class LbCatalog
             var jobName = jobs?.GetRowOrDefault(jobId)?.Abbreviation.ToString() ?? $"Job{jobId}";
             var parts = string.Join(", ", ids.Select(id =>
             {
-                var name = actions?.GetRowOrDefault(id)?.Name.ToString() ?? $"Action{id}";
-                return $"{id} ({name})";
+                var row = actions?.GetRowOrDefault(id);
+                var name = row?.Name.ToString() ?? $"Action{id}";
+                var placed = row?.TargetArea == true ? ", placed" : string.Empty;
+                return $"{id} ({name}{placed})";
             }));
             RunLog.Debug($"  {jobId} {jobName} -> [{parts}]");
         }

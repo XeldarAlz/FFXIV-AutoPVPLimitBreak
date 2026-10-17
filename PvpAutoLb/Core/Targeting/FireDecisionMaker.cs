@@ -73,14 +73,12 @@ internal static class FireDecisionMaker
         if (cfg.SkipInvulnerableTargets) below = FilterImmune(below);
         if (below.Count == 0) return null;
 
+        if (profile.CentersOnCaster) return DecidePbAoe(profile, below);
+
         return profile.Shape switch
         {
-            LbCastShape.CircleAroundCaster
-                or LbCastShape.GroundCircle
-                or LbCastShape.Donut
-                => DecidePbAoe(profile, below),
-
             LbCastShape.CircleAroundTarget
+                or LbCastShape.GroundCircle
                 => DecideCircleAroundTarget(profile, cfg, below),
 
             _ => DecideSingleTarget(profile, cfg, below),

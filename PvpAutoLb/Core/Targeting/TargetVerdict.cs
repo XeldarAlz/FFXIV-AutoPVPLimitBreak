@@ -41,7 +41,7 @@ internal static class TargetVerdict
 
     private static float ReachFor(LbTargetingProfile profile, Configuration configuration)
     {
-        if (profile.Shape is LbCastShape.CircleAroundCaster or LbCastShape.GroundCircle or LbCastShape.Donut)
+        if (profile.CentersOnCaster)
         {
             return profile.EffectRange > 0 ? profile.EffectRange : PvpAutoLbConstants.UnknownAoeFallbackYalms;
         }

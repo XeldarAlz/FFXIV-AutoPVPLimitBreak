@@ -20,9 +20,15 @@ internal readonly record struct LbTargetingProfile(
     uint ActionId,
     float Range,
     float EffectRange,
-    LbCastShape Shape)
+    LbCastShape Shape,
+    bool TargetArea)
 {
-    public static LbTargetingProfile None => new(0, 0, 0, LbCastShape.Unknown);
+    public static LbTargetingProfile None => new(0, 0, 0, LbCastShape.Unknown, false);
+
+    // A ground circle the game asks a placement for (Summon Bahamut, Mesotes) lands where it is placed, up to Range
+    // away; one without it is centred on the caster like any other point-blank AoE.
+    public bool CentersOnCaster => Shape is LbCastShape.CircleAroundCaster or LbCastShape.Donut
+        || (Shape == LbCastShape.GroundCircle && !TargetArea);
 
     public bool IsAoe => Shape is
         LbCastShape.CircleAroundCaster or
@@ -52,7 +58,7 @@ internal readonly record struct LbTargetingProfile(
         var range = row.Value.Range < 0 ? 0f : row.Value.Range;
         var effect = (float)row.Value.EffectRange;
         var shape = MapShape(row.Value.CastType);
-        return new LbTargetingProfile(actionId, range, effect, shape);
+        return new LbTargetingProfile(actionId, range, effect, shape, row.Value.TargetArea);
     }
 
     private static LbCastShape MapShape(byte castType) => castType switch
