@@ -163,6 +163,7 @@
   "changelog.new": "Novo",
   "changelog.changes.one": "{0} mudança",
   "changelog.changes.other": "{0} mudanças",
+  "changelog.r1410.1": "A janela principal agora só se move ao arrastar a barra superior, então arrastar dentro dela não a move mais sem querer; ative Arrastar de qualquer lugar nas configurações para o comportamento antigo",
   "changelog.r1400.1": "Corrigido: os Limit Break de área, como os de Summoner e Sage, abriam o cursor de posicionamento e nunca saíam; agora são colocados no alvo, ou em você se forem defensivos",
   "changelog.r1310.1": "Adicionado um botão do Buy Me a Coffee abaixo do Patreon na página Sobre",
   "changelog.r1300.1": "Corrigido: o jogo travava em Frontline quando o inimigo exibido no HUD de combate sumia",

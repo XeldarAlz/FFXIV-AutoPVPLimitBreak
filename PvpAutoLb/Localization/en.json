@@ -163,6 +163,7 @@
   "changelog.new": "New",
   "changelog.changes.one": "{0} change",
   "changelog.changes.other": "{0} changes",
+  "changelog.r1410.1": "The main window now moves only when you drag its top bar, so a drag inside it no longer moves it by accident; turn on Drag from anywhere in the settings for the old behaviour",
   "changelog.r1400.1": "Fixed ground-targeted limit breaks, such as Summoner's and Sage's, opening the placement cursor and never landing: they are now placed at the target, or on yourself for defensive ones",
   "changelog.r1310.1": "Added a Buy Me a Coffee button under Patreon on the About page",
   "changelog.r1300.1": "Fixed the game crashing in Frontline when the enemy shown on the combat HUD disappeared",

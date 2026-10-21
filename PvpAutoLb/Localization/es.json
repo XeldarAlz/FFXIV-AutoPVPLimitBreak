@@ -163,6 +163,7 @@
   "changelog.new": "Nuevo",
   "changelog.changes.one": "{0} cambio",
   "changelog.changes.other": "{0} cambios",
+  "changelog.r1410.1": "La ventana principal ahora solo se mueve al arrastrar su barra superior, así que arrastrar dentro de ella ya no la mueve sin querer; activa Arrastrar desde cualquier punto en los ajustes para el comportamiento anterior",
   "changelog.r1400.1": "Corregido: los Limit Break de área, como los de Invocador y Sabio, abrían el cursor de colocación y nunca caían; ahora se colocan en el objetivo, o sobre ti si son defensivos",
   "changelog.r1310.1": "Añadido un botón de Buy Me a Coffee debajo de Patreon en la página Acerca de",
   "changelog.r1300.1": "Corregido: el juego se cerraba en Frontline cuando desaparecía el enemigo mostrado en el HUD de combate",

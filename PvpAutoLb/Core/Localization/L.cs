@@ -197,6 +197,11 @@ internal static class L
         public static readonly LocString New = new("changelog.new", "New");
         public static readonly LocPlural Changes = new("changelog.changes", "{0} change", "{0} changes");
 
+        public static readonly LocString[] Release1410 =
+        [
+            new("changelog.r1410.1", "The main window now moves only when you drag its top bar, so a drag inside it no longer moves it by accident; turn on Drag from anywhere in the settings for the old behaviour"),
+        ];
+
         public static readonly LocString[] Release1400 =
         [
             new("changelog.r1400.1", "Fixed ground-targeted limit breaks, such as Summoner's and Sage's, opening the placement cursor and never landing: they are now placed at the target, or on yourself for defensive ones"),
