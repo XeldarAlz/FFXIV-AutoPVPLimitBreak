@@ -346,6 +346,8 @@
   "settings.general.window": "ウィンドウ",
   "settings.general.openOnLogin": "ログイン時に開く",
   "settings.general.openOnLoginHelp": "次回ログイン時にメインウィンドウを自動で開きます。",
+  "settings.general.dragAnywhere": "どこでもドラッグで移動",
+  "settings.general.dragAnywhereHelp": "ウィンドウ内のどこをドラッグしても移動できます。オフにすると上部のバーでのみ移動します。",
   "plugin.commandHelp": "Auto PVP LBウィンドウを開閉します。/pvpautolb config | log | changelog | about | hud（戦闘HUDの表示・非表示）",
   "plugin.commandHelpAlias": "/pvpautolb の別名です。"
 }

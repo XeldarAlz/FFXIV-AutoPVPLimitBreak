@@ -346,6 +346,8 @@
   "settings.general.window": "Ventana",
   "settings.general.openOnLogin": "Abrir al iniciar sesión",
   "settings.general.openOnLoginHelp": "Abre la ventana principal automáticamente la próxima vez que inicies sesión.",
+  "settings.general.dragAnywhere": "Arrastrar desde cualquier punto",
+  "settings.general.dragAnywhereHelp": "Mueve la ventana arrastrando desde cualquier punto de su interior. Si está desactivado, solo la barra superior la mueve.",
   "plugin.commandHelp": "Abre o cierra la ventana de Auto PVP LB. /pvpautolb config | log | changelog | about | hud (mostrar u ocultar el HUD de combate).",
   "plugin.commandHelpAlias": "Alias de /pvpautolb."
 }

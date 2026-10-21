@@ -346,6 +346,8 @@
   "settings.general.window": "Fenêtre",
   "settings.general.openOnLogin": "Ouvrir à la connexion",
   "settings.general.openOnLoginHelp": "Ouvre automatiquement la fenêtre principale à votre prochaine connexion.",
+  "settings.general.dragAnywhere": "Déplacer depuis n'importe où",
+  "settings.general.dragAnywhereHelp": "Déplace la fenêtre en la faisant glisser depuis n'importe quel point. Désactivé, seule la barre du haut la déplace.",
   "plugin.commandHelp": "Ouvre ou ferme la fenêtre Auto PVP LB. /pvpautolb config | log | changelog | about | hud (afficher ou masquer le HUD de combat).",
   "plugin.commandHelpAlias": "Alias de /pvpautolb."
 }

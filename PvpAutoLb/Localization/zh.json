@@ -346,6 +346,8 @@
   "settings.general.window": "窗口",
   "settings.general.openOnLogin": "登录时打开",
   "settings.general.openOnLoginHelp": "下次登录时自动打开主窗口。",
+  "settings.general.dragAnywhere": "任意位置拖动",
+  "settings.general.dragAnywhereHelp": "在窗口内任意位置拖动即可移动窗口。关闭后只能通过顶部栏移动。",
   "plugin.commandHelp": "打开或关闭 Auto PVP LB 窗口。/pvpautolb config | log | changelog | about | hud（显示或隐藏战斗HUD）。",
   "plugin.commandHelpAlias": "/pvpautolb 的别名。"
 }

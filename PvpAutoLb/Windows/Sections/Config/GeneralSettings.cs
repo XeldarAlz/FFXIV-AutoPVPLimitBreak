@@ -19,6 +19,12 @@ internal static class GeneralSettings
             {
                 configuration.AutoShowOnLogin = openOnLogin;
             }
+
+            var dragAnywhere = configuration.DragWindowFromAnywhere;
+            if (SettingsControls.ToggleRow(Loc.T(L.Settings.DragAnywhere), Loc.T(L.Settings.DragAnywhereHelp), "##palb_drag_anywhere", ref dragAnywhere))
+            {
+                configuration.DragWindowFromAnywhere = dragAnywhere;
+            }
         }
     }
 }

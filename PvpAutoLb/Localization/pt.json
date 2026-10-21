@@ -346,6 +346,8 @@
   "settings.general.window": "Janela",
   "settings.general.openOnLogin": "Abrir ao entrar",
   "settings.general.openOnLoginHelp": "Abre a janela principal automaticamente na próxima vez que você entrar.",
+  "settings.general.dragAnywhere": "Arrastar de qualquer lugar",
+  "settings.general.dragAnywhereHelp": "Move a janela ao arrastar de qualquer ponto dentro dela. Desativado, só a barra superior a move.",
   "plugin.commandHelp": "Abre ou fecha a janela do Auto PVP LB. /pvpautolb config | log | changelog | about | hud (mostrar ou ocultar o HUD de combate).",
   "plugin.commandHelpAlias": "Alias de /pvpautolb."
 }

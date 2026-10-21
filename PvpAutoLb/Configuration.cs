@@ -61,6 +61,7 @@ public class Configuration : IPluginConfiguration
 
     public string Language { get; set; } = string.Empty;
     public bool AutoShowOnLogin { get; set; }
+    public bool DragWindowFromAnywhere { get; set; }
     public bool ShowCombatHud { get; set; } = true;
     public bool CombatHudLocked { get; set; }
 

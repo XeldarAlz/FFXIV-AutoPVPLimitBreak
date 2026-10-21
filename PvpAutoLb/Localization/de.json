@@ -346,6 +346,8 @@
   "settings.general.window": "Fenster",
   "settings.general.openOnLogin": "Beim Einloggen öffnen",
   "settings.general.openOnLoginHelp": "Öffnet das Hauptfenster beim nächsten Einloggen automatisch.",
+  "settings.general.dragAnywhere": "Überall ziehen",
+  "settings.general.dragAnywhereHelp": "Verschiebt das Fenster beim Ziehen an einer beliebigen Stelle. Ist das aus, verschiebt nur die obere Leiste das Fenster.",
   "plugin.commandHelp": "Öffnet oder schließt das Auto-PVP-LB-Fenster. /pvpautolb config | log | changelog | about | hud (Kampf-HUD ein- oder ausblenden).",
   "plugin.commandHelpAlias": "Alias für /pvpautolb."
 }

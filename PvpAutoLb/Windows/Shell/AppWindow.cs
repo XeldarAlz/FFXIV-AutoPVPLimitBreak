@@ -115,6 +115,11 @@ public sealed class AppWindow : Window, IDisposable
         Flags = sizeDriven ? BaseFlags | ImGuiWindowFlags.NoResize : BaseFlags;
         SizeConstraints = sizeDriven ? CompactConstraints : ExpandedConstraints;
 
+        if (!plugin.Configuration.DragWindowFromAnywhere)
+        {
+            Flags |= ImGuiWindowFlags.NoMove;
+        }
+
         if (sizeDriven)
         {
             var height = expandedSize.Y + (Layout.HeaderHeight - expandedSize.Y) * collapse;

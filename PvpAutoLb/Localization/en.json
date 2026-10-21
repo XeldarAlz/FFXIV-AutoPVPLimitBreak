@@ -346,6 +346,8 @@
   "settings.general.window": "Window",
   "settings.general.openOnLogin": "Open on login",
   "settings.general.openOnLoginHelp": "Pop the main window automatically the next time you log in.",
+  "settings.general.dragAnywhere": "Drag from anywhere",
+  "settings.general.dragAnywhereHelp": "Move the window by dragging anywhere inside it. When off, only the top bar moves it.",
   "plugin.commandHelp": "Toggle the Auto PVP LB window. /pvpautolb config | log | changelog | about | hud (show or hide the combat HUD).",
   "plugin.commandHelpAlias": "Alias for /pvpautolb."
 }

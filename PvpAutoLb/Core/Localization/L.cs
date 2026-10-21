@@ -428,6 +428,8 @@ internal static class L
         public static readonly LocString WindowGroup = new("settings.general.window", "Window");
         public static readonly LocString OpenOnLogin = new("settings.general.openOnLogin", "Open on login");
         public static readonly LocString OpenOnLoginHelp = new("settings.general.openOnLoginHelp", "Pop the main window automatically the next time you log in.");
+        public static readonly LocString DragAnywhere = new("settings.general.dragAnywhere", "Drag from anywhere");
+        public static readonly LocString DragAnywhereHelp = new("settings.general.dragAnywhereHelp", "Move the window by dragging anywhere inside it. When off, only the top bar moves it.");
     }
 
     internal static class Plugin

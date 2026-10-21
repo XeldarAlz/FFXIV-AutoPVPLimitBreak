@@ -346,6 +346,8 @@
   "settings.general.window": "Pencere",
   "settings.general.openOnLogin": "Girişte aç",
   "settings.general.openOnLoginHelp": "Bir sonraki girişinizde ana pencereyi otomatik açar.",
+  "settings.general.dragAnywhere": "Her yerden sürükle",
+  "settings.general.dragAnywhereHelp": "Pencereyi içinde herhangi bir yerden sürükleyerek taşır. Kapalıyken yalnızca üst çubuk taşır.",
   "plugin.commandHelp": "Auto PVP LB penceresini açar veya kapatır. /pvpautolb config | log | changelog | about | hud (savaş HUD'unu göster ya da gizle).",
   "plugin.commandHelpAlias": "/pvpautolb için kısayol."
 }
