@@ -19,9 +19,19 @@ internal static class LbCatalog
     public static IReadOnlyList<uint> ResolveActionIds(uint classJobId)
         => ActionsByJobId.Value.TryGetValue(classJobId, out var ids) ? ids : EmptyIds;
 
+    // The follow-up a used limit break turns into is aimed by its own reach, not the limit break's.
     public static LbTargetingProfile ResolveProfile(uint classJobId)
     {
         var ids = ResolveActionIds(classJobId);
+        for (var index = 0; index < ids.Count; index++)
+        {
+            var current = ActionExec.ResolveAdjusted(ids[index]);
+            if (current != ids[index])
+            {
+                return ProfileFor(current);
+            }
+        }
+
         return ids.Count > 0 ? ProfileFor(ids[0]) : LbTargetingProfile.None;
     }
 

@@ -8,7 +8,7 @@ internal sealed class LbFirer
 {
     private readonly TargetSwapper swapper;
 
-    private readonly Dictionary<uint, bool> pendingByAction = new();
+    private readonly Dictionary<uint, uint> pendingActionBySlot = new();
 
     public DateTime? LastFiredUtc { get; private set; }
 
@@ -18,27 +18,34 @@ internal sealed class LbFirer
     }
 
     // Resubmit on every ready tick (do NOT throttle) so competing rotation plugins can't overwrite our queued LB.
+    // A used limit break turns into its follow-up on the same button (Deathflare, Encore of Light, Flare Star); pending
+    // is kept per slot because the button has already changed by the time the sent action is seen to have gone off.
     public bool TryFire(uint jobId, IBattleChara target, out uint firedActionId)
     {
         firedActionId = 0;
-        var actionIds = LbCatalog.ResolveActionIds(jobId);
-        if (actionIds.Count == 0) return false;
+        var slotIds = LbCatalog.ResolveActionIds(jobId);
+        if (slotIds.Count == 0)
+        {
+            return false;
+        }
 
         var targetId = (ulong)target.EntityId;
-        foreach (var actionId in actionIds)
+        for (var slotIndex = 0; slotIndex < slotIds.Count; slotIndex++)
         {
-            var ready = ActionExec.IsReady(actionId, targetId);
-            var wasPending = pendingByAction.TryGetValue(actionId, out var p) && p;
-
-            if (wasPending && !ready)
+            var slotId = slotIds[slotIndex];
+            if (pendingActionBySlot.TryGetValue(slotId, out var pendingActionId) && !ActionExec.IsReady(pendingActionId, targetId))
             {
-                pendingByAction[actionId] = false;
+                pendingActionBySlot.Remove(slotId);
                 LastFiredUtc = DateTime.UtcNow;
-                firedActionId = actionId;
+                firedActionId = pendingActionId;
                 return true;
             }
 
-            if (!ready) continue;
+            var actionId = ActionExec.ResolveAdjusted(slotId);
+            if (IsResolvedByEarlierSlot(slotIds, slotIndex, actionId) || !ActionExec.IsReady(actionId, targetId))
+            {
+                continue;
+            }
 
             swapper.Swap(target);
             // Summon Bahamut and Mesotes want a placement: on the target for an offensive rule, on the player for a
@@ -47,8 +54,24 @@ internal sealed class LbFirer
                 ? ActionExec.TryUseAt(actionId, targetId, target.Position)
                 : ActionExec.TryUse(actionId, targetId);
             if (used)
-                pendingByAction[actionId] = true;
+            {
+                pendingActionBySlot[slotId] = actionId;
+            }
         }
+        return false;
+    }
+
+    // A limit break can resolve to a follow-up the catalog also lists on its own; it is sent once so it counts once.
+    private static bool IsResolvedByEarlierSlot(IReadOnlyList<uint> slotIds, int slotIndex, uint actionId)
+    {
+        for (var earlierIndex = 0; earlierIndex < slotIndex; earlierIndex++)
+        {
+            if (ActionExec.ResolveAdjusted(slotIds[earlierIndex]) == actionId)
+            {
+                return true;
+            }
+        }
+
         return false;
     }
 }

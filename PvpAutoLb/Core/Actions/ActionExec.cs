@@ -22,6 +22,17 @@ internal static unsafe class ActionExec
         return am->UseActionLocation(ActionType.Action, actionId, targetId, &location);
     }
 
+    public static uint ResolveAdjusted(uint actionId)
+    {
+        if (actionId == 0)
+        {
+            return 0;
+        }
+
+        var actionManager = ActionManager.Instance();
+        return actionManager == null ? actionId : actionManager->GetAdjustedActionId(actionId);
+    }
+
     public static bool IsReady(uint actionId, ulong targetId = PvpAutoLbConstants.NoTargetEntityId)
     {
         if (actionId == 0) return false;

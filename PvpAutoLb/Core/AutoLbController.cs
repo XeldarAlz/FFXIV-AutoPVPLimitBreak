@@ -95,13 +95,29 @@ internal sealed class AutoLbController : IDisposable
         var scanRange = Math.Max(cfg.AutoSelectRangeYalms, Math.Max(rule.EnemyRadiusYalms, rule.AllyRadiusYalms));
         var hostiles = TargetSelector.ScanHostiles(scanRange);
         var allies = TargetSelector.ScanAllies(scanRange, includeSelf: true);
+        for (var index = 0; index < hostiles.Count; index++)
+        {
+            HpTracker.Sample(hostiles[index]);
+        }
 
         var decision = FireDecisionMaker.Decide(profile, rule, cfg, hostiles, allies, HpTracker);
         LastResolvedTargetId = decision?.HardTarget.GameObjectId ?? 0UL;
         LastEnemiesAffected = 0;
         if (decision == null) return;
 
-        Fire(jobId, decision.HardTarget, 0, offensive: false);
+        if (!profile.RequiresEnemyTarget)
+        {
+            Fire(jobId, decision.HardTarget, 0, offensive: false);
+            return;
+        }
+
+        if (BlocklistFilter.IsBlocked(decision.HardTarget, cfg.NameBlocklist))
+        {
+            return;
+        }
+
+        LastEnemiesAffected = decision.EnemiesAffected;
+        Fire(jobId, decision.HardTarget, LastEnemiesAffected, offensive: true);
     }
 
     private void TickManualTarget(uint jobId)

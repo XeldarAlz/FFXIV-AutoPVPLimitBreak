@@ -16,10 +16,23 @@ internal static class FireDecisionMaker
 
         return rule.Mode switch
         {
-            LbFireMode.Defensive => DecideDefensive(rule, hostiles, allies),
-            LbFireMode.Utility => DecideUtility(rule, hostiles, allies),
+            LbFireMode.Defensive => AimSupport(DecideDefensive(rule, hostiles, allies), profile, cfg, hostiles, tracker),
+            LbFireMode.Utility => AimSupport(DecideUtility(rule, hostiles, allies), profile, cfg, hostiles, tracker),
             _ => DecideOffensive(profile, cfg, hostiles, tracker),
         };
+    }
+
+    // A team-state rule says when to fire, but an action that only lands on an enemy (Encore of Light, Flare Star) cannot
+    // be cast on the player, so it takes an enemy by its own reach with no HP threshold.
+    private static FireDecision? AimSupport(FireDecision? decision, LbTargetingProfile profile, Configuration cfg,
+        IReadOnlyList<IBattleChara> hostiles, HpTracker tracker)
+    {
+        if (decision == null || !profile.RequiresEnemyTarget)
+        {
+            return decision;
+        }
+
+        return PickTarget(profile, cfg, hostiles, tracker);
     }
 
     private static FireDecision? DecideDefensive(LbRule rule, IReadOnlyList<IBattleChara> hostiles, IReadOnlyList<IBattleChara> allies)
@@ -61,27 +74,31 @@ internal static class FireDecisionMaker
         if (hostiles.Count == 0) return null;
 
         var jobId = Player.Object!.ClassJob.RowId;
-        var below = FilterBelowThreshold(hostiles, cfg, jobId);
-        if (below.Count == 0) return null;
+        return PickTarget(profile, cfg, FilterBelowThreshold(hostiles, cfg, jobId), tracker);
+    }
 
-        if (cfg.SkipDoomedTargets) below = FilterDoomed(below, tracker);
-        if (below.Count == 0) return null;
+    private static FireDecision? PickTarget(LbTargetingProfile profile, Configuration cfg, IReadOnlyList<IBattleChara> candidates, HpTracker tracker)
+    {
+        if (candidates.Count == 0) return null;
 
-        if (cfg.SkipGuardedTargets) below = FilterGuarded(below);
-        if (below.Count == 0) return null;
+        if (cfg.SkipDoomedTargets) candidates = FilterDoomed(candidates, tracker);
+        if (candidates.Count == 0) return null;
 
-        if (cfg.SkipInvulnerableTargets) below = FilterImmune(below);
-        if (below.Count == 0) return null;
+        if (cfg.SkipGuardedTargets) candidates = FilterGuarded(candidates);
+        if (candidates.Count == 0) return null;
 
-        if (profile.CentersOnCaster) return DecidePbAoe(profile, below);
+        if (cfg.SkipInvulnerableTargets) candidates = FilterImmune(candidates);
+        if (candidates.Count == 0) return null;
+
+        if (profile.CentersOnCaster) return DecidePbAoe(profile, candidates);
 
         return profile.Shape switch
         {
             LbCastShape.CircleAroundTarget
                 or LbCastShape.GroundCircle
-                => DecideCircleAroundTarget(profile, cfg, below),
+                => DecideCircleAroundTarget(profile, cfg, candidates),
 
-            _ => DecideSingleTarget(profile, cfg, below),
+            _ => DecideSingleTarget(profile, cfg, candidates),
         };
     }
 
@@ -159,7 +176,7 @@ internal static class FireDecisionMaker
         return result;
     }
 
-    private static List<IBattleChara> FilterDoomed(List<IBattleChara> below, HpTracker tracker)
+    private static List<IBattleChara> FilterDoomed(IReadOnlyList<IBattleChara> below, HpTracker tracker)
     {
         var result = new List<IBattleChara>(below.Count);
         for (var i = 0; i < below.Count; i++)
@@ -171,7 +188,7 @@ internal static class FireDecisionMaker
         return result;
     }
 
-    private static List<IBattleChara> FilterGuarded(List<IBattleChara> below)
+    private static List<IBattleChara> FilterGuarded(IReadOnlyList<IBattleChara> below)
     {
         var result = new List<IBattleChara>(below.Count);
         for (var i = 0; i < below.Count; i++)
@@ -182,7 +199,7 @@ internal static class FireDecisionMaker
         return result;
     }
 
-    private static List<IBattleChara> FilterImmune(List<IBattleChara> below)
+    private static List<IBattleChara> FilterImmune(IReadOnlyList<IBattleChara> below)
     {
         var result = new List<IBattleChara>(below.Count);
         for (var i = 0; i < below.Count; i++)
