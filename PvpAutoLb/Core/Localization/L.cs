@@ -197,6 +197,13 @@ internal static class L
         public static readonly LocString New = new("changelog.new", "New");
         public static readonly LocPlural Changes = new("changelog.changes", "{0} change", "{0} changes");
 
+        public static readonly LocString[] Release1500 =
+        [
+            new("changelog.r1500.1", "Fixed the follow-up a limit break turns into never being used: Deathflare, Brand of Purgatory, Encore of Light, Flare Star and Frost Star now fire under your limit break rules, and so do other jobs' follow-ups such as Blade of Faith, Terminal Trigger and Communio"),
+            new("changelog.r1500.2", "Follow-ups that can only hit an enemy, such as Encore of Light and the stars, now aim at an enemy for a job set to Defensive or Utility, instead of at you"),
+            new("changelog.r1500.3", "Fixed limit breaks that hit an area around their target, such as Zantetsuken and World-swallower, only firing at enemies within 5 yalms of you: they now use their full 20 yalm range"),
+        ];
+
         public static readonly LocString[] Release1410 =
         [
             new("changelog.r1410.1", "The main window now moves only when you drag its top bar, so a drag inside it no longer moves it by accident; turn on Drag from anywhere in the settings for the old behaviour"),
